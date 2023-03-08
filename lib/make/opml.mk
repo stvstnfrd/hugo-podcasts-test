@@ -2,6 +2,9 @@ OPML_FILE=etc/feed.opml
 OPML_FILE_BACKUP=$(OPML_FILE).bak
 OPML_UPDATE_SCRIPT=./bin/opml-add-feed.awk
 OPML_DATE=$(shell date +'%b %-d, %Y %H:%M:%S')
+ifndef OPML_TITLE
+OPML_TITLE=$(OPML_URL)
+endif
 
 .PHONY: opml-subscribe
 opml-subscribe:  ## Subscribe to a new feed
