@@ -32,18 +32,39 @@ jobs:
       run: "make opml-subscribe OPML_URL='${{ inputs.url }}' OPML_TITLE='${{ inputs.title }}' OPML_WEBSITE='${{ inputs.website }}' OPML_FILE='${{ inputs.file }}'"
     - name: Validate the updated file
       run: make lint-xml
+    - name: Preview the feed
+      id: feed
+      run: |
+        if [ "${{ inputs.title }}" ]
+        then
+            title="${{ inputs.title }}"
+        else
+            title="${{ inputs.url }}"
+        fi
+        echo "title=${title}" >>"${GITHUB_OUTPUT}"
+        delimiter="$(openssl rand -hex 8)"
+        echo "contents<<${delimiter}" >>"${GITHUB_OUTPUT}"
+        curl "${{ inputs.url }}" >input.xml
+        xmllint --format input.xml >>"${GITHUB_OUTPUT}"
+        echo "${delimiter}" >>"${GITHUB_OUTPUT}"
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v4
       with:
         add-paths: |
           ${{ inputs.file }}
-        commit-message: 'feat: subscribe to new feed; ${{ inputs.title }}'
+        branch-suffix: timestamp
+        commit-message: 'feat: subscribe to new feed; ${{ steps.feed.outputs.title }}'
         delete-branch: true
-        title: 'feat: subscribe to new feed; ${{ inputs.title }}'
+        title: 'feat: subscribe to new feed; ${{ steps.feed.outputs.title }}'
         body: |
-          \# ${{ inputs.title }}
+          # ${{ steps.feed.outputs.title }}
 
-          \- [Feed](${{ inputs.url }}
-          \- [Website](${{ inputs.website }}
+          - [Feed](${{ inputs.url }})
+          - [Website](${{ inputs.website }})
+
+          ## Preview
+          ```xml
+          ${{ steps.feed.outputs.contents }}
+          ```
         labels: |
-          content
+          feeds
