@@ -6,6 +6,7 @@ HUGO_CONFIG_FILE=$(HUGO_SITE_NAME)/config.yaml
 PYTHON=PYTHONPATH=./lib ./.venv/bin/python
 PYTHON_REQUIREMENTS=./lib/requirements.txt
 PYLINT=PYTHONPATH=./lib ./.venv/bin/pylint
+COVERAGE=PYTHONPATH=./lib ./.venv/bin/coverage
 
 OPML_FILE=etc/feed.opml
 
@@ -159,3 +160,20 @@ ifeq (1,$(GIT_HAS_ORIGIN))
 	|| true
 endif
 endif
+
+.PHONY: lint-python
+lint-python:  ## Lint python code for consistency
+	$(PYLINT) lib/ --disable fixme
+
+.PHONY: lint-todo
+lint-todo:  ## Check for TODO items
+	$(PYLINT) lib/ --disable all --enable fixme
+
+.PHONY: lint-hugo
+lint-hugo:  ## Check that the Hugo documents build
+	$(MAKE) build
+
+.PHONY:
+test-python:  ## Check that the python test suite passes
+	$(COVERAGE) run -m unittest discover lib/
+	$(COVERAGE) report
