@@ -22,4 +22,11 @@ else
 		"$(OPML_FILE_BACKUP)" \
 	>"$(OPML_FILE)"
 	rm "$(OPML_FILE_BACKUP)"
+ifneq (,$(GIT_COMMIT))
+	$(GIT) add "$(OPML_FILE)"
+	$(GIT) commit -m "feat: subscribe to new feed; $(OPML_TITLE)"
+ifneq (,$(GIT_PUSH))
+	$(GIT) push "$(GIT_REMOTE_CONTENT)" "$(GIT_BRANCH_CURRENT)"
+endif
+endif
 endif

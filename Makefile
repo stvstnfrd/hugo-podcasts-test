@@ -51,6 +51,12 @@ endif
 ifndef GIT_REMOTE_STATIC
 GIT_REMOTE_STATIC=$(GIT_REMOTE_CONTENT)
 endif
+GIT_BRANCH_CURRENT=$(shell $(GIT) branch --show-current)
+# Set these to a non-empty value to:
+## Commit changes made by the target
+GIT_COMMIT=
+## Push commits to the remote repository
+GIT_PUSH=
 
 .PHONY: update-theme
 update-theme:  ## Check for and download new versions of the Hugo Theme
