@@ -32,6 +32,12 @@ jobs:
       run: "make opml-subscribe OPML_URL='${{ inputs.url }}' OPML_TITLE='${{ inputs.title }}' OPML_WEBSITE='${{ inputs.website }}' OPML_FILE='${{ inputs.file }}'"
     - name: Validate the updated file
       run: make lint-xml
+    - name: Preview the feed
+      id: feed
+      run: |
+        curl "${{ inputs.url }}" >input.xml
+        xmllint --format input.xml >output.xml
+        echo "contents=$(cat output.xml)\n" >> $GITHUB_OUTPUT
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v4
       with:
@@ -45,5 +51,10 @@ jobs:
 
           \- [Feed](${{ inputs.url }})
           \- [Website](${{ inputs.website }})
+
+          ## Preview
+          ```xml
+          ${{ steps.feed.outputs.contents }}
+          ```
         labels: |
           content
