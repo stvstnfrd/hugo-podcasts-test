@@ -52,6 +52,7 @@ jobs:
       with:
         add-paths: |
           ${{ inputs.file }}
+        branch-suffix: timestamp
         commit-message: 'feat: subscribe to new feed; ${{ inputs.title }}'
         delete-branch: true
         title: 'feat: subscribe to new feed; ${{ steps.feed.outputs.title }}'
