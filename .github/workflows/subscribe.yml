@@ -36,8 +36,10 @@ jobs:
       id: feed
       run: |
         curl "${{ inputs.url }}" >input.xml
-        xmllint --format input.xml >output.xml
-        echo "contents=$(cat output.xml)\n" >> $GITHUB_OUTPUT
+        delimiter="$(openssl rand -hex 8)"
+        echo "contents<<${delimiter}" >>"${GITHUB_OUTPUT}"
+        xmllint --format input.xml >>"${GITHUB_OUTPUT}"
+        echo "${delimiter}" >> "${GITHUB_OUTPUT}"
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v4
       with:
