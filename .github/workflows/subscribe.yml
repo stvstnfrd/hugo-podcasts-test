@@ -35,12 +35,11 @@ jobs:
     - name: Preview the feed
       id: feed
       run: |
-        title="feat: subscribe to new feed; "
         if [ "${{ inputs.title }}" ]
         then
-            title="${title}; ${{ inputs.title }}"
+            title="${{ inputs.title }}"
         else
-            title="${title}; ${{ inputs.url }}"
+            title="${{ inputs.url }}"
         fi
         echo "title=${title}" >>"${GITHUB_OUTPUT}"
         delimiter="$(openssl rand -hex 8)"
@@ -55,7 +54,7 @@ jobs:
           ${{ inputs.file }}
         commit-message: 'feat: subscribe to new feed; ${{ inputs.title }}'
         delete-branch: true
-        title: '${{ steps.feed.outputs.title }}'
+        title: 'feat: subscribe to new feed; ${{ steps.feed.outputs.title }}'
         body: |
           # ${{ inputs.title }}
 
