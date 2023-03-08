@@ -47,6 +47,26 @@ ifndef GIT_BRANCH_STATIC
 GIT_BRANCH_STATIC=$(GIT_BRANCH_CONTENT)
 endif
 
+.PHONY: update-theme
+update-theme:  ## Check for and download new versions of the Hugo Theme
+	@if ! $(GIT) diff --cached --exit-code . 2>/dev/null >/dev/null; then \
+		$(GIT) diff --cached; \
+		echo "Canceling; local changes staged for commit."; \
+		exit 1; \
+	fi
+	@if ! $(GIT) diff --exit-code src/go.mod src/go.sum 2>/dev/null >/dev/null; then \
+		$(GIT) diff src/go.mod src/go.sum; \
+		echo "Canceling; local changes to commit."; \
+		exit 1; \
+	fi
+	cd "$(HUGO_SITE_NAME)" && \
+		"$(HUGO)" mod get -u github.com/frjo/hugo-theme-zen \
+		&& "$(HUGO)" mod tidy;
+ifeq (1,$(GIT_IS_ACTIVE))
+	$(GIT) add src/go.mod src/go.sum
+	$(GIT) commit -m 'chore: bump theme versions' || true
+endif
+
 .PHONY: update-content
 update-content:  ## Update content/metadata for feeds
 ifeq (1,$(GIT_IS_ACTIVE))
