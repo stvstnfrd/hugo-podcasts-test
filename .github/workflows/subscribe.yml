@@ -35,9 +35,17 @@ jobs:
     - name: Preview the feed
       id: feed
       run: |
-        curl "${{ inputs.url }}" >input.xml
+        title="feat: subscribe to new feed; "
+        if [ "${{ inputs.title }}" ]
+        then
+            title="${title}; ${{ inputs.title }}"
+        else
+            title="${title}; ${{ inputs.url }}"
+        fi
+        echo "title=${title}" >>"${GITHUB_OUTPUT}"
         delimiter="$(openssl rand -hex 8)"
         echo "contents<<${delimiter}" >>"${GITHUB_OUTPUT}"
+        curl "${{ inputs.url }}" >input.xml
         xmllint --format input.xml >>"${GITHUB_OUTPUT}"
         echo "${delimiter}" >>"${GITHUB_OUTPUT}"
     - name: Create Pull Request
@@ -47,7 +55,7 @@ jobs:
           ${{ inputs.file }}
         commit-message: 'feat: subscribe to new feed; ${{ inputs.title }}'
         delete-branch: true
-        title: 'feat: subscribe to new feed; ${{ inputs.title }}'
+        title: '${{ steps.feed.outputs.title }}'
         body: |
           # ${{ inputs.title }}
 
