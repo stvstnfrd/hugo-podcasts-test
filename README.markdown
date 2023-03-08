@@ -29,6 +29,22 @@ aka rss2hugo
 6.  Publish your site
     - `ls dist/public`
 
+### Subscribing to a new feed
+
+### Github Actions
+
+There is a Workflow Action that will automatically create pull requests,
+based on the provided input (feed URL, title, website).
+
+To use the Action, you must enable the following settings
+on your project settings page, under Actions/General.
+
+- Allow GitHub Actions to create and approve pull requests
+- Read and Write Permissions
+
+Then you can use the _Subscribe to an RSS Feed_
+[Workflow](actions/workflows/subscribe.yml).
+
 ### Advanced Use
 
 #### Store static on another branch
