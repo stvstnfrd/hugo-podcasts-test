@@ -22,7 +22,7 @@ on:
         required: false
         type: string
 jobs:
-  print-username:
+  subscribe:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
