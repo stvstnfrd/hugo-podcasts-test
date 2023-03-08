@@ -9,8 +9,6 @@ PYLINT=PYTHONPATH=./lib ./.venv/bin/pylint
 COVERAGE=PYTHONPATH=./lib ./.venv/bin/coverage
 GIT_REMOTE_CONTENT=origin
 
-OPML_FILE=etc/feed.opml
-
 .PHONY: help
 help:  ## This.
 	@perl -ne 'print if /^[a-zA-Z.-]+:.*## .*$$/' $(MAKEFILE_LIST) \
@@ -39,6 +37,7 @@ init:  ## Initialize an empty repository
 	mkdir -p dist/static
 
 
+include lib/make/opml.mk
 include lib/options.mk
 GIT_IS_ACTIVE=$(shell "$(GIT)" rev-parse HEAD 2>/dev/null >/dev/null && echo 1 || echo 0)
 GIT_HAS_ORIGIN=$(shell "$(GIT)" remote get-url origin 2>/dev/null >/dev/null && echo 1 || echo 0)
@@ -177,6 +176,10 @@ lint-todo:  ## Check for TODO items
 .PHONY: lint-hugo
 lint-hugo:  ## Check that the Hugo documents build
 	$(MAKE) build
+
+.PHONY: lint-xml
+lint-xml:  ## Check that the OPML file is valid
+	xmllint --noout "$(OPML_FILE)"
 
 .PHONY:
 test-python:  ## Check that the python test suite passes
