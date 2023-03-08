@@ -22,7 +22,7 @@ on:
         required: false
         type: string
 jobs:
-  print-username:
+  subscribe:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -39,7 +39,11 @@ jobs:
           ${{ inputs.file }}
         commit-message: 'feat: subscribe to new feed; ${{ inputs.title }}'
         delete-branch: true
-        title:
-        body:
+        title: 'feat: subscribe to new feed; ${{ inputs.title }}'
+        body: |
+          \# ${{ inputs.title }}
+
+          \- [Feed](${{ inputs.url }}
+          \- [Website](${{ inputs.website }}
         labels: |
           content
