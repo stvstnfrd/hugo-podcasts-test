@@ -1,6 +1,6 @@
 name: Subscribe to an RSS Feed
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       url:
         description: 'The URL of the RSS feed'
