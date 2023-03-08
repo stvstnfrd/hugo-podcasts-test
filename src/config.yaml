@@ -1,0 +1,16 @@
+baseURL: 'http://example.org/'
+languageCode: 'en-us'
+title: 'My Podcasts'
+theme: 'github.com/frjo/hugo-theme-zen'
+paginate: 25
+publishDir: '../dist/public'
+module:
+  replacements: 'content -> ../../dist/content,static -> ../../dist/static'
+  imports:
+  - path: 'static'
+    disabled: false
+    mounts:
+    - source: 'static'
+      target: 'static/podcasts'
+  - path: 'github.com/frjo/hugo-theme-zen'
+    disabled: false
