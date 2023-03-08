@@ -66,4 +66,4 @@ jobs:
           ${{ steps.feed.outputs.contents }}
           ```
         labels: |
-          content
+          feeds
