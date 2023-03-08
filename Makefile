@@ -7,6 +7,7 @@ PYTHON=PYTHONPATH=./lib ./.venv/bin/python
 PYTHON_REQUIREMENTS=./lib/requirements.txt
 PYLINT=PYTHONPATH=./lib ./.venv/bin/pylint
 COVERAGE=PYTHONPATH=./lib ./.venv/bin/coverage
+GIT_REMOTE_CONTENT=origin
 
 OPML_FILE=etc/feed.opml
 
@@ -38,6 +39,7 @@ init:  ## Initialize an empty repository
 	mkdir -p dist/static
 
 
+include lib/options.mk
 GIT_IS_ACTIVE=$(shell "$(GIT)" rev-parse HEAD 2>/dev/null >/dev/null && echo 1 || echo 0)
 GIT_HAS_ORIGIN=$(shell "$(GIT)" remote get-url origin 2>/dev/null >/dev/null && echo 1 || echo 0)
 GIT_CAN_AUTHOR=$(shell "$(GIT)" config user.email 2>/dev/null >/dev/null && echo 1 || echo 0)
@@ -46,6 +48,9 @@ GIT_BRANCH_CONTENT=main
 endif
 ifndef GIT_BRANCH_STATIC
 GIT_BRANCH_STATIC=$(GIT_BRANCH_CONTENT)
+endif
+ifndef GIT_REMOTE_STATIC
+GIT_REMOTE_STATIC=$(GIT_REMOTE_CONTENT)
 endif
 
 .PHONY: update-theme
