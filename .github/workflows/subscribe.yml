@@ -43,7 +43,7 @@ jobs:
         body: |
           \# ${{ inputs.title }}
 
-          \- [Feed](${{ inputs.url }}
-          \- [Website](${{ inputs.website }}
+          \- [Feed](${{ inputs.url }})
+          \- [Website](${{ inputs.website }})
         labels: |
           content
