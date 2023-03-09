@@ -45,6 +45,15 @@ on your project settings page, under Actions/General.
 Then you can use the _Subscribe to an RSS Feed_
 [Workflow](actions/workflows/subscribe.yml).
 
+#### Publish Github Pages
+
+Before you can publish to Github Pages,
+you'll need to update the _Pages Settings_:
+
+Source
+: GitHub Actions
+
+
 ### Advanced Use
 
 #### Store static on another branch
