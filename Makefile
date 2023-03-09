@@ -2,6 +2,7 @@ GIT=git
 HUGO=hugo
 HUGO_FLAGS=--buildDrafts --cacheDir=$(PWD)/tmp/cache
 HUGO_SITE_NAME=src
+HUGO_THEME=$(shell $(PYTHON) ./bin/get-key-from-yaml.py $(HUGO_SITE_NAME)/config.yaml theme)
 HUGO_CONFIG_FILE=$(HUGO_SITE_NAME)/config.yaml
 PYTHON=PYTHONPATH=./lib ./.venv/bin/python
 PYTHON_REQUIREMENTS=./lib/requirements.txt
@@ -27,8 +28,10 @@ serve:  ## Serve up a preview instance of the site
 
 .PHONY: build
 build:  ## Build the Hugo site
-	cd "$(HUGO_SITE_NAME)" && \
-		"$(HUGO)" $(HUGO_FLAGS)
+	cd "$(HUGO_SITE_NAME)" \
+		&& $(HUGO) mod get -u "$(HUGO_THEME)" \
+		&& "$(HUGO)" $(HUGO_FLAGS) \
+	;
 
 init:  ## Initialize an empty repository
 	"$(HUGO)" new site "$(HUGO_SITE_NAME)"
@@ -57,6 +60,8 @@ GIT_BRANCH_CURRENT=$(shell $(GIT) branch --show-current)
 GIT_COMMIT=
 ## Push commits to the remote repository
 GIT_PUSH=
+GIT_FETCH=
+GIT_BRANCH=
 
 .PHONY: update-theme
 update-theme:  ## Check for and download new versions of the Hugo Theme
@@ -78,25 +83,36 @@ ifeq (1,$(GIT_IS_ACTIVE))
 	$(GIT) commit -m 'chore: bump theme versions' || true
 endif
 
+define assert-not-has-changes-saved
+@$(GIT) diff --cached --exit-code --quiet . \
+|| { \
+    echo "Canceling; local changes staged for commit."; \
+    exit 1; \
+}
+endef
+
+define assert-not-has-changes-to-file
+$(GIT) status --untracked-files=no --porcelain "$(1)" \
+| grep '.' --silent \
+&& { \
+    $(GIT) status --untracked-files=no "$(1)"; \
+    echo "Canceling; local changes to commit."; \
+    exit 1; \
+} \
+|| true
+endef
+
 .PHONY: update-content
 update-content:  ## Update content/metadata for feeds
 ifeq (1,$(GIT_IS_ACTIVE))
-	@if ! $(GIT) diff --cached --exit-code . 2>/dev/null >/dev/null; then \
-		$(GIT) diff --cached; \
-		echo "Canceling; local changes staged for commit."; \
-		exit 1; \
-	fi
-	"$(GIT)" status --untracked-files=all --porcelain dist/content \
-	| grep '.' --silent \
-	&& { \
-		$(GIT) status --untracked-files=all dist/content; \
-		echo "Canceling; local changes to commit."; \
-	} \
-	|| true
+	$(call assert-not-has-changes-saved,)
+	$(call assert-not-has-changes-to-file,dist/content)
+ifeq (1,$(GIT_BRANCH))
 	$(GIT) branch | grep " $(GIT_BRANCH_CONTENT)$$" --silent \
 	|| $(GIT) branch "$(GIT_BRANCH_CONTENT)" "main"
 	"$(GIT)" checkout "$(GIT_BRANCH_CONTENT)"
-ifeq (1,$(GIT_HAS_ORIGIN))
+endif
+ifeq (1,$(GIT_FETCH))
 	"$(GIT)" fetch origin
 	"$(GIT)" rebase "origin/$(GIT_BRANCH_CONTENT)"
 endif
@@ -108,7 +124,7 @@ endif
 		--content-directory content/content \
 		--static-directory static/static \
 	;
-ifeq (1,$(GIT_CAN_AUTHOR))
+ifeq (1,$(GIT_COMMIT))
 	"$(GIT)" status --untracked-files=all --porcelain dist/content \
 	| grep '.' --silent \
 	&& { \
@@ -116,9 +132,8 @@ ifeq (1,$(GIT_CAN_AUTHOR))
 		&& $(GIT) commit -m 'feat: update content' \
 	; } \
 	|| true
-ifeq (1,$(GIT_HAS_ORIGIN))
-	$(GIT) push origin "$(GIT_BRANCH_CONTENT)" \
-	|| true
+ifeq (1,$(GIT_PUSH))
+	$(GIT) push origin "$(GIT_BRANCH_CONTENT)"
 endif
 endif
 
