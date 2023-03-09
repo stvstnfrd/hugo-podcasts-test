@@ -1,0 +1,27 @@
+name: Update Feeds Contents
+on:
+  push:
+    branches:
+    - main
+    - master
+    paths:
+    - etc/feed.opml
+  workflow_dispatch:
+jobs:
+  update-content:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install dependencies
+      run: |
+        sudo apt-get install -y hugo pandoc
+        make _virtualenv
+    - name: Fetch content updates
+      run: |
+        git config --global user.name "${GITHUB_REPOSITORY%/*}"
+        git config --global user.email "${GITHUB_REPOSITORY%/*}@users.noreply.github.com"
+        make update-content GIT_COMMIT=1
+    - name: Validate the updated file
+      run: make build
+    - name: Push changes
+      run: git push origin "$(git branch --show-current)"
