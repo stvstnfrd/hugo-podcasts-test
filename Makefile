@@ -2,6 +2,7 @@ GIT=git
 HUGO=hugo
 HUGO_FLAGS=--buildDrafts --cacheDir=$(PWD)/tmp/cache
 HUGO_SITE_NAME=src
+HUGO_THEME=$(shell $(PYTHON) ./bin/get-key-from-yaml.py $(HUGO_SITE_NAME)/config.yaml theme)
 HUGO_CONFIG_FILE=$(HUGO_SITE_NAME)/config.yaml
 PYTHON=PYTHONPATH=./lib ./.venv/bin/python
 PYTHON_REQUIREMENTS=./lib/requirements.txt
@@ -27,8 +28,10 @@ serve:  ## Serve up a preview instance of the site
 
 .PHONY: build
 build:  ## Build the Hugo site
-	cd "$(HUGO_SITE_NAME)" && \
-		"$(HUGO)" $(HUGO_FLAGS)
+	cd "$(HUGO_SITE_NAME)" \
+		&& $(HUGO) mod get -u "$(HUGO_THEME)" \
+		&& "$(HUGO)" $(HUGO_FLAGS) \
+	;
 
 init:  ## Initialize an empty repository
 	"$(HUGO)" new site "$(HUGO_SITE_NAME)"
