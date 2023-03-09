@@ -476,7 +476,7 @@ class FeedDirectory(Parser):
             for item in items:
                 episode = Episode.from_item(item, self)
                 episode.save()
-                break  # TODO: one episode only
+                # break  # TODO: one episode only
         # pylint: enable=too-many-locals
 
     def _write(self, front_matter):
