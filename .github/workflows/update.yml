@@ -1,4 +1,7 @@
 name: Update Feeds Contents
+permissions:
+  id-token: write
+  pages: write
 on:
   push:
     branches:
