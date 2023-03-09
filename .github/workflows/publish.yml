@@ -1,0 +1,26 @@
+name: Publish updates to Github Pages
+on:
+  push:
+    branches:
+    - main
+    - master
+  workflow_dispatch:
+jobs:
+  update-content:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Install dependencies
+      run: |
+        sudo apt-get install -y hugo pandoc
+        make _virtualenv
+    - name: Validate the updated file
+      run: make build
+    - name: Archive artifact
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: dist/public
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v1
