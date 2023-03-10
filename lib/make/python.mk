@@ -16,7 +16,7 @@ $(PYTHON) bin/parse-feed.py '$(1)' \
 endef
 
 .PHONY: requirements-python
-requirements-python: requirements-system  ## Create a new virtualenv and install packages
+requirements-python: requirements-system  ### Create a new virtualenv and install packages
 	test -d ./.venv || python3 -m venv ./.venv
 	./.venv/bin/pip install -r "$(PYTHON_REQUIREMENTS)"
 

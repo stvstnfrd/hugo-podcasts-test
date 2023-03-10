@@ -16,7 +16,7 @@ build: requirements-system  ## Build the Hugo site
 		&& "$(HUGO)" $(HUGO_FLAGS) \
 	;
 
-init: requirements-system  ## Initialize an empty repository
+init: requirements-system  ### Initialize an empty repository
 	"$(HUGO)" new site "$(HUGO_SITE_NAME)"
 	echo "podcasts: {}" >> "$(HUGO_CONFIG_FILE)"
 	mkdir -p dist/content

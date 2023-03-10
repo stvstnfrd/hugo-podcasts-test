@@ -6,7 +6,7 @@ APT_REQUIREMENTS_OUTPUT=$(APT_REQUIREMENTS_OUTPUT_DIRECTORY)/$(notdir $(APT_REQU
 APT_INSTALL=sudo apt-get install -y
 
 .PHONY: requirements-system
-requirements-system: $(APT_REQUIREMENTS_OUTPUT)  ## Install system requirements
+requirements-system: $(APT_REQUIREMENTS_OUTPUT)  ### Install system requirements
 $(APT_REQUIREMENTS_OUTPUT): $(APT_REQUIREMENTS_INPUT)
 	while read line; do \
 		line=$$(echo "$${line}" | sed 's/^ +//; s/ *#.*$$//;'); \
@@ -27,7 +27,7 @@ $(APT_REQUIREMENTS_OUTPUT): $(APT_REQUIREMENTS_INPUT)
 	cp '$(<)' '$(@)'
 else
 .PHONY: requirements-system
-requirements-system:
+requirements-system:  ### Install system requirements
 ifneq (,$(REQUIREMENTS_SYSTEM))
 	@echo "WARN:  We were unable to detect your package manager,"
 	@echo "WARN:  so you will need to ensure the following"
