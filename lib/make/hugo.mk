@@ -5,25 +5,25 @@ HUGO_THEME=$(shell $(PYTHON) ./bin/get-key-from-yaml.py $(HUGO_SITE_NAME)/config
 HUGO_CONFIG_FILE=$(HUGO_SITE_NAME)/config.yaml
 
 .PHONY: serve
-serve:  ## Serve up a preview instance of the site
+serve: requirements-system  ## Serve up a preview instance of the site
 	cd "$(HUGO_SITE_NAME)" && \
 		"$(HUGO)" server $(HUGO_FLAGS)
 
 .PHONY: build
-build:  ## Build the Hugo site
+build: requirements-system  ## Build the Hugo site
 	cd "$(HUGO_SITE_NAME)" \
 		&& $(HUGO) mod get -u "$(HUGO_THEME)" \
 		&& "$(HUGO)" $(HUGO_FLAGS) \
 	;
 
-init:  ## Initialize an empty repository
+init: requirements-system  ## Initialize an empty repository
 	"$(HUGO)" new site "$(HUGO_SITE_NAME)"
 	echo "podcasts: {}" >> "$(HUGO_CONFIG_FILE)"
 	mkdir -p dist/content
 	mkdir -p dist/static
 
 .PHONY: update-theme
-update-theme:  ## Check for and download new versions of the Hugo Theme
+update-theme: requirements-system  ## Check for and download new versions of the Hugo Theme
 	$(call assert-not-has-changes-saved,)
 	$(call assert-not-has-changes-to-file,src/go.mod src/go.sum)
 	cd "$(HUGO_SITE_NAME)" && \

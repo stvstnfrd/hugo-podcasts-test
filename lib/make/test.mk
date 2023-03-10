@@ -26,7 +26,7 @@ _test-python-requirements: requirements-python  ## Install requirements for Pyth
 	$(PIP_INSTALL) coverage
 
 .PHONY: lint-xml
-lint-xml:  ## Check that the OPML file is valid
+lint-xml: requirements-system  ## Check that the OPML file is valid
 	# TODO: install requirements
 	$(XMLLINT) $(XMLLINT_FLAGS) "$(OPML_FILE)"
 

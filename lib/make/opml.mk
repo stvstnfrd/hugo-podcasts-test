@@ -7,7 +7,7 @@ OPML_TITLE=$(OPML_URL)
 endif
 
 .PHONY: opml-subscribe
-opml-subscribe:  ## Subscribe to a new feed
+opml-subscribe: requirements-system  ## Subscribe to a new feed
 ifndef OPML_URL
 	@echo "Usage: make opml-subscribe OPML_URL='https://.../index.xml' OPML_TITLE='...' OPML_WEBSITE='https://.../index.html'"
 	exit 1
