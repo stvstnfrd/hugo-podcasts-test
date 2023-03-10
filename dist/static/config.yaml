@@ -1,0 +1,8 @@
+module:
+  replacements: 'content -> ../../content'
+  imports:
+  - path: 'content'
+    disabled: false
+    mounts:
+    - source: 'content'
+      target: 'content/podcasts'
