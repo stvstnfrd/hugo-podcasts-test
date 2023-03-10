@@ -1,0 +1,11 @@
+# Package listings take the following form:
+#     package [command]
+# where command is an optional executable.
+# If specified, package is only installed
+#     if command doesn't exist.
+# Commented lines are ignored.
+hugo hugo
+pandoc pandoc
+libxml2-utils xmllint
+# python3
+# git

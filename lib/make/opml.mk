@@ -7,7 +7,7 @@ OPML_TITLE=$(OPML_URL)
 endif
 
 .PHONY: opml-subscribe
-opml-subscribe:  ## Subscribe to a new feed
+opml-subscribe: requirements-system  ## Subscribe to a new feed
 ifndef OPML_URL
 	@echo "Usage: make opml-subscribe OPML_URL='https://.../index.xml' OPML_TITLE='...' OPML_WEBSITE='https://.../index.html'"
 	exit 1
@@ -22,11 +22,5 @@ else
 		"$(OPML_FILE_BACKUP)" \
 	>"$(OPML_FILE)"
 	rm "$(OPML_FILE_BACKUP)"
-ifneq (,$(GIT_COMMIT))
-	$(GIT) add "$(OPML_FILE)"
-	$(GIT) commit -m "feat: subscribe to new feed; $(OPML_TITLE)"
-ifneq (,$(GIT_PUSH))
-	$(GIT) push "$(GIT_REMOTE_CONTENT)" "$(GIT_BRANCH_CURRENT)"
-endif
-endif
+	$(call git-commit-path,$(OPML_FILE),feat: subscribe to new feed; $(OPML_TITLE))
 endif

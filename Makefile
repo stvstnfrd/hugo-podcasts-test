@@ -9,3 +9,4 @@ include lib/make/opml.mk
 include lib/make/git.mk
 include lib/make/python.mk
 include lib/make/test.mk
+include lib/make/requirements.mk
