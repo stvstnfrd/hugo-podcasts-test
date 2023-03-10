@@ -19,7 +19,6 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get install -y hugo pandoc
-        make _virtualenv
     - name: Validate the updated file
       run: make build
     - name: Archive artifact

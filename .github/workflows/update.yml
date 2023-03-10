@@ -21,7 +21,6 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get install -y hugo pandoc
-        make _virtualenv
     - name: Fetch content updates
       run: |
         git config --global user.name "${GITHUB_REPOSITORY%/*}"

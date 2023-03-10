@@ -13,7 +13,7 @@ lint-python-todo: _lint-python-requirements  ## Check for TODO items in Python f
 	$(PYLINT) $(PYTHON_LIB_PATH) --disable all --enable fixme
 
 .PHONY: _lint-python-requirements
-_lint-python-requirements: _virtualenv  ## Install requirements for Python linting
+_lint-python-requirements: requirements-python  ## Install requirements for Python linting
 	$(PIP_INSTALL) pylint
 
 .PHONY:
@@ -22,7 +22,7 @@ test-python: _test-python-requirements  ## Check that the python test suite pass
 	$(COVERAGE) report
 
 .PHONY: _test-python-requirements
-_test-python-requirements: _virtualenv  ## Install requirements for Python testing
+_test-python-requirements: requirements-python  ## Install requirements for Python testing
 	$(PIP_INSTALL) coverage
 
 .PHONY: lint-xml

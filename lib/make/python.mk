@@ -15,13 +15,13 @@ $(PYTHON) bin/parse-feed.py '$(1)' \
 ;
 endef
 
-.PHONY: _virtualenv
-_virtualenv:  ## Create a new virtualenv and install packages
+.PHONY: requirements-python
+requirements-python: requirements-system  ## Create a new virtualenv and install packages
 	test -d ./.venv || python3 -m venv ./.venv
 	./.venv/bin/pip install -r "$(PYTHON_REQUIREMENTS)"
 
 .PHONY: update-content
-update-content: _virtualenv  ## Update content/metadata for feeds
+update-content: requirements-python  ## Update content/metadata for feeds
 	$(call assert-not-has-changes-saved,)
 	$(call assert-not-has-changes-to-file,dist/content)
 	$(call git-checkout-branch,$(GIT_BRANCH_CONTENT))
@@ -30,7 +30,7 @@ update-content: _virtualenv  ## Update content/metadata for feeds
 	$(call git-commit-path,dist/content,feat: update content)
 
 .PHONY: update-static
-update-static:  ## Fetch static assets (images/audio/video)
+update-static: requirements-python  ## Fetch static assets (images/audio/video)
 	$(call assert-not-has-changes-saved,)
 	$(call assert-not-has-changes-to-file,dist/static)
 	$(call git-checkout-branch,$(GIT_BRANCH_STATIC))
@@ -42,5 +42,5 @@ endif
 	$(call git-commit-path,dist/static,feat: update static)
 
 .PHONY: update-feeds
-update-feeds:
+update-feeds: requirements-python
 	$(PYTHON) bin/parse-opml.py "$(OPML_FILE)" dist --content-directory content/content
