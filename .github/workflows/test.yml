@@ -34,3 +34,9 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Run the python tests
       run: make test-python
+  lint-xml:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Validate the updated file
+      run: make lint-xml

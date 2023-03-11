@@ -6,10 +6,10 @@ ifndef OPML_TITLE
 OPML_TITLE=$(OPML_URL)
 endif
 
-.PHONY: opml-subscribe
-opml-subscribe: requirements-system  ## Subscribe to a new feed
+.PHONY: subscribe
+subscribe: requirements-system  ## Subscribe to a new feed
 ifndef OPML_URL
-	@echo "Usage: make opml-subscribe OPML_URL='https://.../index.xml' OPML_TITLE='...' OPML_WEBSITE='https://.../index.html'"
+	@echo "Usage: make subscribe OPML_URL='https://.../index.xml' OPML_TITLE='...' OPML_WEBSITE='https://.../index.html'"
 	exit 1
 else
 	cp "$(OPML_FILE)" "$(OPML_FILE_BACKUP)"

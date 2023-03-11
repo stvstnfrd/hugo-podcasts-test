@@ -16,14 +16,14 @@ build: requirements-system  ## Build the Hugo site
 		&& "$(HUGO)" $(HUGO_FLAGS) \
 	;
 
-init: requirements-system  ## Initialize an empty repository
+init: requirements-system  ### Initialize an empty repository
 	"$(HUGO)" new site "$(HUGO_SITE_NAME)"
 	echo "podcasts: {}" >> "$(HUGO_CONFIG_FILE)"
 	mkdir -p dist/content
 	mkdir -p dist/static
 
 .PHONY: update-theme
-update-theme: requirements-system  ## Check for and download new versions of the Hugo Theme
+theme: requirements-system  ## Check for and download new versions of the Hugo Theme
 	$(call assert-not-has-changes-saved,)
 	$(call assert-not-has-changes-to-file,src/go.mod src/go.sum)
 	cd "$(HUGO_SITE_NAME)" && \

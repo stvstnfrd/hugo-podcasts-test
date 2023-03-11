@@ -20,10 +20,10 @@ aka rss2hugo
       select the repository you forked in the first step.
 2.  Edit the list of feeds in `./etc/feeds.opml`.
 3.  Refresh your content
-    - `make update-content`
+    - `make content`
 4.  If you're also saving the artwork/media,
     - Refresh your static assets
-        - `make update-static`
+        - `make static`
 5.  Rebuild the static site.
     - `make build`
 6.  Publish your site

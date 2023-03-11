@@ -16,12 +16,12 @@ $(PYTHON) bin/parse-feed.py '$(1)' \
 endef
 
 .PHONY: requirements-python
-requirements-python: requirements-system  ## Create a new virtualenv and install packages
+requirements-python: requirements-system  ### Create a new virtualenv and install packages
 	test -d ./.venv || python3 -m venv ./.venv
 	./.venv/bin/pip install -r "$(PYTHON_REQUIREMENTS)"
 
-.PHONY: update-content
-update-content: requirements-python  ## Update content/metadata for feeds
+.PHONY: content
+content: requirements-python  ## Update content/metadata for feeds
 	$(call assert-not-has-changes-saved,)
 	$(call assert-not-has-changes-to-file,dist/content)
 	$(call git-checkout-branch,$(GIT_BRANCH_CONTENT))
@@ -29,8 +29,8 @@ update-content: requirements-python  ## Update content/metadata for feeds
 	$(call fetch-feeds,./dist,content/content,static/static,--skip-images --skip-media)
 	$(call git-commit-path,dist/content,feat: update content)
 
-.PHONY: update-static
-update-static: requirements-python  ## Fetch static assets (images/audio/video)
+.PHONY: static
+static: requirements-python  ## Fetch static assets (images/audio/video)
 	$(call assert-not-has-changes-saved,)
 	$(call assert-not-has-changes-to-file,dist/static)
 	$(call git-checkout-branch,$(GIT_BRANCH_STATIC))
