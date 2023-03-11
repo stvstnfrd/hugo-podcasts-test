@@ -14,7 +14,7 @@ on:
   - cron: '0 0,6,12,18 * * *'
   workflow_dispatch:
 jobs:
-  update-content:
+  content:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -22,7 +22,7 @@ jobs:
       run: |
         git config --global user.name "${GITHUB_REPOSITORY%/*}"
         git config --global user.email "${GITHUB_REPOSITORY%/*}@users.noreply.github.com"
-        make update-content GIT_COMMIT=1
+        make content GIT_COMMIT=1
     - name: Validate the updated file
       run: make build
     - name: Push changes

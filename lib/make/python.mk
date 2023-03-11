@@ -20,8 +20,8 @@ requirements-python: requirements-system  ### Create a new virtualenv and instal
 	test -d ./.venv || python3 -m venv ./.venv
 	./.venv/bin/pip install -r "$(PYTHON_REQUIREMENTS)"
 
-.PHONY: update-content
-update-content: requirements-python  ## Update content/metadata for feeds
+.PHONY: content
+content: requirements-python  ## Update content/metadata for feeds
 	$(call assert-not-has-changes-saved,)
 	$(call assert-not-has-changes-to-file,dist/content)
 	$(call git-checkout-branch,$(GIT_BRANCH_CONTENT))
