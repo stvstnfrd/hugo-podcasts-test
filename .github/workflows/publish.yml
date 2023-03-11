@@ -11,7 +11,7 @@ on:
     - master
   workflow_dispatch:
 jobs:
-  update-content:
+  publish:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
