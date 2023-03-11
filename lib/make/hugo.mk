@@ -23,7 +23,7 @@ init: requirements-system  ### Initialize an empty repository
 	mkdir -p dist/static
 
 .PHONY: update-theme
-update-theme: requirements-system  ## Check for and download new versions of the Hugo Theme
+theme: requirements-system  ## Check for and download new versions of the Hugo Theme
 	$(call assert-not-has-changes-saved,)
 	$(call assert-not-has-changes-to-file,src/go.mod src/go.sum)
 	cd "$(HUGO_SITE_NAME)" && \
