@@ -23,7 +23,7 @@ aka rss2hugo
     - `make content`
 4.  If you're also saving the artwork/media,
     - Refresh your static assets
-        - `make update-static`
+        - `make static`
 5.  Rebuild the static site.
     - `make build`
 6.  Publish your site
