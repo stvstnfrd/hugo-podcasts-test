@@ -56,10 +56,10 @@ jobs:
         else
           echo "Unsupported workflow type" >/dev/stderror
         fi
-        echo "url='${url}'" >>"${GITHUB_OUTPUT}"
-        echo "title='${title}'" >>"${GITHUB_OUTPUT}"
-        echo "website='${website}'" >>"${GITHUB_OUTPUT}"
-        echo "file='${file}'" >>"${GITHUB_OUTPUT}"
+        echo "url=${url}" >>"${GITHUB_OUTPUT}"
+        echo "title=${title}" >>"${GITHUB_OUTPUT}"
+        echo "website=${website}" >>"${GITHUB_OUTPUT}"
+        echo "file=${file}" >>"${GITHUB_OUTPUT}"
   subscribe:
     needs: setup
     if: needs.setup.outputs.url
