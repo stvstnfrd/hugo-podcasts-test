@@ -37,7 +37,7 @@ jobs:
     - name: Set parameters
       id: params
       run: |
-        url=
+        url=''
         if [ "${GITHUB_EVENT_NAME}" = "issues" ]; then
           printf '%s\n' '${{ github.event.issue.body }}' >issue.txt
           action="$(./bin/parse-issue.sh Action)"
