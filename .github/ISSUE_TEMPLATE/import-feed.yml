@@ -1,6 +1,6 @@
 name: Import Feed
 description: Import a new RSS feed
-title: ''
+title: "request: "
 labels:
   - "import"
 body:
