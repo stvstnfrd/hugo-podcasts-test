@@ -78,12 +78,8 @@ jobs:
     - name: Preview the feed
       id: feed
       run: |
-        if [ -n "${{ needs.setup.outputs.title }}" ]
-        then
-            title=${{ needs.setup.outputs.title }}
-        else
-            title=${{ needs.setup.outputs.url }}
-        fi
+        title=${{ needs.setup.outputs.title }}
+        title=${title:-${{ needs.setup.outputs.url }}}
         echo "title=${title}" >>"${GITHUB_OUTPUT}"
         delimiter="$(openssl rand -hex 8)"
         echo "contents<<${delimiter}" >>"${GITHUB_OUTPUT}"
