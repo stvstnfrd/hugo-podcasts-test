@@ -41,11 +41,11 @@ jobs:
         url=''
         if [ "${GITHUB_EVENT_NAME}" = "issues" ]; then
           printf '%s\n' '${{ github.event.issue.body }}' >issue.txt
-          action="$(./bin/get-key-from-issue Action)"
+          action="$(./bin/get-key-from-issue Action issue.txt)"
           if [ "${action}" = import-feed ]; then
-            url="$(./bin/get-key-from-issue URL)"
-            title="$(./bin/get-key-from-issue Title)"
-            website="$(./bin/get-key-from-issue Website)"
+            url="$(./bin/get-key-from-issue URL issue.txt)"
+            title="$(./bin/get-key-from-issue Title issue.txt)"
+            website="$(./bin/get-key-from-issue Website issue.txt)"
             file="etc/feed.opml"
           fi
         elif  [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
