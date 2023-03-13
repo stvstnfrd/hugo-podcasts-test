@@ -43,20 +43,23 @@ body:
       description: What categories does the feed fit in?
     validations:
       required: true
-  - type: checkboxes
+  - type: dropdown
     id: explicit
     attributes:
       label: Explicit
       description: Does the feed contain explicit content?
+      multiple: false
       options:
-      - label: Contains Explicit Content?
-        required: false
+      - false
+      - true
+    validations:
+      required: true
   - type: dropdown
     attributes:
       label: action
       multiple: false
       options:
-        - import-feed
+        - create-feed
     validations:
       required: true
   - type: dropdown
