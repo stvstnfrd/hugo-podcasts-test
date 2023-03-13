@@ -48,9 +48,9 @@ body:
     attributes:
       label: Explicit
       description: Does the feed contain explicit content?
-    options:
-    - label: Contains Explicit Content?
-      required: false
+      options:
+      - label: Contains Explicit Content?
+        required: false
   - type: dropdown
     attributes:
       label: action
