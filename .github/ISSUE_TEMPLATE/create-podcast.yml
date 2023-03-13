@@ -1,0 +1,72 @@
+name: Create Podcast
+description: Create a new podcast
+title: "create: a new RSS feed"
+labels:
+  - "create"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Request to create a new RSS feed
+  - type: input
+    id: title
+    attributes:
+      label: Title
+      description: What is the feed called?
+      placeholder: My Feed
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: How would you describe the feed?
+    validations:
+      required: true
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language
+      multiple: false
+      options:
+      - en
+      description: What language is the feed in?
+    validations:
+      required: true
+  - type: dropdown
+    id: categories
+    attributes:
+      label: Categories
+      multiple: true
+      options:
+      - News
+      description: What categories does the feed fit in?
+    validations:
+      required: true
+  - type: checkboxes
+    id: explicit
+    attributes:
+      label: Explicit
+      description: Does the feed contain explicit content?
+    options:
+    - label: Contains Explicit Content?
+      required: false
+  - type: dropdown
+    attributes:
+      label: action
+      multiple: false
+      options:
+        - import-feed
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      multiple: false
+      options:
+      - episodic
+      - serial
+      description: What kind of show is it?
+    validations:
+      required: true
