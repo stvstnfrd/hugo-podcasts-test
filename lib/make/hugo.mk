@@ -30,3 +30,30 @@ theme: requirements-system  ## Check for and download new versions of the Hugo T
 		"$(HUGO)" mod get -u github.com/frjo/hugo-theme-zen \
 		&& "$(HUGO)" mod tidy;
 	$(call git-commit-path,src/go.mod src/go.sum,chore: bump theme versions)
+
+ifdef FEED_ISSUE
+FEED_TITLE=$(shell ./bin/get-key-from-issue title '$(FEED_ISSUE)' | sed "s/'/\\'/g")
+FEED_TITLE_CLEAN=$(shell ./bin/get-key-from-issue title '$(FEED_ISSUE)' | sed "s/'/\\'/g" | sed 's/^\s\+//; s/\s\+$$//; s/ \+/-/g; s/[^-_a-zA-Z0-9]//g' | tr '[:upper:]' '[:lower:]')
+endif
+ifdef FEED_TITLE
+FEED_TITLE_CLEAN=$(shell echo '$(FEED_TITLE)' | sed "s/'/\\'/g" | sed 's/^\s\+//; s/\s\+$$//; s/ \+/-/g; s/[^-_a-zA-Z0-9]//g' | tr '[:upper:]' '[:lower:]')
+FEED_INDEX_NAME=podcasts/$(FEED_TITLE_CLEAN)/_index.markdown
+FEED_INDEX=$(HUGO_SITE_NAME)/content/$(FEED_INDEX_NAME)
+endif
+
+.PHONY: feed
+feed: requirements-python  ## Create a new feed
+ifndef FEED_TITLE
+	@echo "Usage: make feed FEED_TITLE='My Podcast Name'"
+	@echo "Usage: make feed FEED_ISSUE='./path/to/github-issue.markdown'"
+	exit 1
+else
+	test -d '$(HUGO_SITE_NAME)/content/podcasts' || mkdir -p '$(HUGO_SITE_NAME)/content/podcasts'
+	test -e '$(FEED_INDEX)' \
+	|| (cd '$(HUGO_SITE_NAME)' && \
+		hugo new "$(FEED_INDEX_NAME)")
+ifdef FEED_ISSUE
+	$(PYTHON) ./bin/update-feed-from-issue \
+		"$(FEED_INDEX)" "$(FEED_ISSUE)"
+endif
+endif
