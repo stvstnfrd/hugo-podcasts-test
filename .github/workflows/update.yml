@@ -18,15 +18,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - name: Update feeds lists
+      env:
+        OPML_FILE: etc/feed.opml
+      run: |
+        make update-feeds
     - name: Fetch content updates
+      env:
+        GIT_COMMIT: 1
       run: |
         git config --global user.name "${GITHUB_REPOSITORY%/*}"
         git config --global user.email "${GITHUB_REPOSITORY%/*}@users.noreply.github.com"
-        make content GIT_COMMIT=1
+        make content
     - name: Validate the updated file
       run: make build
     - name: Push changes
-      run: git push origin "$(git branch --show-current)"
+      run: |
+        git add dist/content
+        git commit -m 'feat: update feeds from OPML'
+        git push origin "$(git branch --show-current)"
     - name: Archive artifact
       uses: actions/upload-pages-artifact@v1
       with:

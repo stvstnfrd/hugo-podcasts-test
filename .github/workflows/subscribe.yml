@@ -3,6 +3,7 @@ on:
   issues:
     types:
     - opened
+    - reopened
   workflow_dispatch:
     inputs:
       url:
@@ -32,19 +33,25 @@ jobs:
       title: ${{ steps.params.outputs.title }}
       website: ${{ steps.params.outputs.website }}
       file: ${{ steps.params.outputs.file }}
+      action: ${{ steps.params.outputs.action }}
     steps:
     - uses: actions/checkout@v3
     - name: Set parameters
       id: params
+      env:
+        FEED_ISSUE: issue.txt
+        GET_KEY_FROM_ISSUE: ./bin/get-key-from-issue
+        PYTHONPATH: lib
       run: |
         url=''
+        action=''
         if [ "${GITHUB_EVENT_NAME}" = 'issues' ]; then
-          printf '%s\n' '${{ github.event.issue.body }}' >issue.txt
-          action="$(./bin/get-key-from-issue Action issue.txt)"
+          printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
+          action="$(${GET_KEY_FROM_ISSUE} Action "${FEED_ISSUE}")"
           if [ "${action}" = import-feed ]; then
-            url="$(./bin/get-key-from-issue URL issue.txt)"
-            title="$(./bin/get-key-from-issue Title issue.txt)"
-            website="$(./bin/get-key-from-issue Website issue.txt)"
+            url="$(${GET_KEY_FROM_ISSUE} URL "${FEED_ISSUE}")"
+            title="$(${GET_KEY_FROM_ISSUE} Title "${FEED_ISSUE}")"
+            website="$(${GET_KEY_FROM_ISSUE} Website "${FEED_ISSUE}")"
             file='etc/feed.opml'
           fi
         elif  [ "${GITHUB_EVENT_NAME}" = 'workflow_dispatch' ]; then
@@ -52,6 +59,7 @@ jobs:
           title="${{ inputs.title }}"
           website="${{ inputs.website }}"
           file="${{ inputs.file }}"
+          action=import-feed
         else
           echo 'Unsupported workflow type' >/dev/stderror
         fi
@@ -59,9 +67,10 @@ jobs:
         echo "title=${title}" >>"${GITHUB_OUTPUT}"
         echo "website=${website}" >>"${GITHUB_OUTPUT}"
         echo "file=${file}" >>"${GITHUB_OUTPUT}"
+        echo "action=${action}" >>"${GITHUB_OUTPUT}"
   subscribe:
     needs: setup
-    if: needs.setup.outputs.url
+    if: needs.setup.outputs.action == 'import-feed'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -109,3 +118,44 @@ jobs:
           ```
         labels: |
           feeds
+  create:
+    if: needs.setup.outputs.action == 'create-feed'
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - id: feed
+      name: Create new podcast index
+      env:
+        FEED_ISSUE: issue.txt
+        GET_KEY_FROM_ISSUE: ./bin/get-key-from-issue
+        PYTHONPATH: lib
+      run: |
+        printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
+        title="$(${GET_KEY_FROM_ISSUE} Title "${FEED_ISSUE}")"
+        echo "title=${title}" >>"${GITHUB_OUTPUT}"
+        delimiter="$(openssl rand -hex 8)"
+        echo "contents<<${delimiter}" >>"${GITHUB_OUTPUT}"
+        ${GET_KEY_FROM_ISSUE} Description "${FEED_ISSUE}" >>"${GITHUB_OUTPUT}"
+        echo "${delimiter}" >>"${GITHUB_OUTPUT}"
+        make feed
+    - name: Validate the changes
+      run: make build
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v4
+      with:
+        add-paths: |
+          src/content
+        branch-suffix: timestamp
+        commit-message: |
+          feat: create new feed; ${{ steps.feed.outputs.title }}
+
+          Fix #${{ github.event.issue.number }}
+        delete-branch: true
+        title: 'feat: create new feed; ${{ steps.feed.outputs.title }}'
+        body: |
+          # ${{ steps.feed.outputs.title }}
+
+          ${{ steps.feed.outputs.contents }}
+        labels: |
+          create-feed

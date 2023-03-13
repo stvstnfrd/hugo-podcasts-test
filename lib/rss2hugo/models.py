@@ -8,6 +8,7 @@ from xml.etree import ElementTree as ET
 import frontmatter
 import requests
 
+from rss2hugo.github import Issue
 from rss2hugo.log import get_logger
 from rss2hugo.markdown import HugoFeedDocument
 from rss2hugo.pandoc import normalize_markup
@@ -380,6 +381,88 @@ class Episode(Parser):
         episode = cls(episode_data, feed_directory)
         return episode
     # pylint: enable=too-many-locals
+
+
+class Feed(frontmatter.Post):
+    """
+    Model lightweight feeds
+    """
+
+    @classmethod
+    def from_post(cls, index_file):
+        """
+        Create a new Feed based on feed file contents
+        """
+        post = frontmatter.load(index_file)
+        feed = cls(**post.to_dict())
+        return feed
+
+    @classmethod
+    def from_issue(cls, issue_file):
+        """
+        Create a new Feed based on issue file contents
+        """
+        data = Issue.from_file(issue_file)
+        data = data.to_dict()
+        data = cls._clean_data(data)
+        del data['content']
+        contents = data['description']
+        del data['description']
+        issue = cls(contents, **data)
+        return issue
+
+    @classmethod
+    def _merge(cls, source, destination):
+        """
+        Merge two dictionaries, deeply
+        """
+        for key, value in source.items():
+            if isinstance(value, dict):
+                destination[key] = destination.get(key, {})
+                cls._merge(value, destination[key])
+            else:
+                destination[key] = value
+        return destination
+
+    def merge(self, issue_file):
+        """
+        Merge issue data into feed data
+        """
+        post = self
+        issue = self.from_issue(issue_file)
+        post_data = post.to_dict()
+        issue_data = issue.to_dict()
+        issue_data = Feed._merge(issue_data, post_data)
+        post = Feed(**post_data)
+        return post
+
+    def save(self, filename):
+        """
+        Write the post to disk
+        """
+        contents = frontmatter.dumps(self)
+        with open(filename, 'w', encoding='utf-8') as _file:
+            _file.write(contents)
+
+    @staticmethod
+    def _clean_data(data):
+        """
+        Sanitize the data to map from Issue -> Feed
+        """
+        tags = list(data['category'].split(', ') + data['categories'].split(', '))
+        del data['category']
+        del data['categories']
+        del data['action']
+        data['tags'] = tags
+        data['explicit'] = data['explicit'].lower() not in ['clean', 'no', 'false']
+        feed = {}
+        for key in data:
+            if key in ['explicit', 'type']:
+                feed[key] = data[key]
+        for key in feed:
+            del data[key]
+        data['feed'] = feed
+        return data
 
 
 class FeedDirectory(Parser):
