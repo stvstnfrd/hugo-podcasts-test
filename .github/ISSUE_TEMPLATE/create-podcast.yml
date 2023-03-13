@@ -50,8 +50,8 @@ body:
       description: Does the feed contain explicit content?
       multiple: false
       options:
-      - false
-      - true
+      - 'false'
+      - 'true'
     validations:
       required: true
   - type: dropdown
