@@ -42,7 +42,7 @@ FEED_INDEX=$(HUGO_SITE_NAME)/content/$(FEED_INDEX_NAME)
 endif
 
 .PHONY: feed
-feed:  ## Create a new feed
+feed: requirements-system  ## Create a new feed
 ifndef FEED_TITLE
 	@echo "Usage: make feed FEED_TITLE='My Podcast Name'"
 	@echo "Usage: make feed FEED_ISSUE='./path/to/github-issue.markdown'"
