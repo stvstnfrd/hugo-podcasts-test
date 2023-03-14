@@ -124,13 +124,13 @@ jobs:
         FEED_ISSUE: issue.txt
       run: |
         printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
-        make feed
         title="$(./bin/get-key-from-issue Title "${FEED_ISSUE}")"
         echo "title=${title}" >>"${GITHUB_OUTPUT}"
         delimiter="$(openssl rand -hex 8)"
         echo "contents<<${delimiter}" >>"${GITHUB_OUTPUT}"
         ./bin/get-key-from-issue Description "${FEED_ISSUE}" >>"${GITHUB_OUTPUT}"
         echo "${delimiter}" >>"${GITHUB_OUTPUT}"
+        make feed
       id: feed
     - name: Validate the changes
       run: make build
