@@ -40,6 +40,7 @@ jobs:
       id: params
       run: |
         url=''
+        action=''
         if [ "${GITHUB_EVENT_NAME}" = 'issues' ]; then
           printf '%s\n' '${{ github.event.issue.body }}' >issue.txt
           action="$(./bin/get-key-from-issue Action issue.txt)"
@@ -54,6 +55,7 @@ jobs:
           title="${{ inputs.title }}"
           website="${{ inputs.website }}"
           file="${{ inputs.file }}"
+          action=import-feed
         else
           echo 'Unsupported workflow type' >/dev/stderror
         fi
@@ -61,8 +63,7 @@ jobs:
         echo "title=${title}" >>"${GITHUB_OUTPUT}"
         echo "website=${website}" >>"${GITHUB_OUTPUT}"
         echo "file=${file}" >>"${GITHUB_OUTPUT}"
-        echo "action=create-feed" >>"${GITHUB_OUTPUT}"
-        echo "${action}"
+        echo "action=${action}" >>"${GITHUB_OUTPUT}"
   subscribe:
     needs: setup
     if: needs.setup.outputs.url
