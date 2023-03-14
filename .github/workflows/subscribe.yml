@@ -61,7 +61,7 @@ jobs:
         echo "title=${title}" >>"${GITHUB_OUTPUT}"
         echo "website=${website}" >>"${GITHUB_OUTPUT}"
         echo "file=${file}" >>"${GITHUB_OUTPUT}"
-        echo "action=${action}" >>"${GITHUB_OUTPUT}"
+        echo "action=create-feed" >>"${GITHUB_OUTPUT}"
         echo "${action}"
   subscribe:
     needs: setup
