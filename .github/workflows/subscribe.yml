@@ -115,7 +115,7 @@ jobs:
           feeds
   create:
     needs: setup
-    if: needs.setup.outputs.action == 'create-feed'
+    if: ${{ needs.setup.outputs.action == 'create-feed' }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
