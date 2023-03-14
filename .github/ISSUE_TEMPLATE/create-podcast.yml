@@ -2,7 +2,7 @@ name: Create Podcast
 description: Create a new podcast
 title: "create: a new RSS feed"
 labels:
-  - "create"
+- create
 body:
   - type: markdown
     attributes:
