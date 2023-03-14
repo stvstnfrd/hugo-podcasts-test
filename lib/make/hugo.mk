@@ -48,6 +48,7 @@ ifndef FEED_TITLE
 	@echo "Usage: make feed FEED_ISSUE='./path/to/github-issue.markdown'"
 	exit 1
 else
+	test -d '$(HUGO_SITE_NAME)/content/podcasts' || mkdir '$(HUGO_SITE_NAME)/content/podcasts'
 	cd '$(HUGO_SITE_NAME)' && \
 		hugo new "$(FEED_INDEX_NAME)"
 ifdef FEED_ISSUE
