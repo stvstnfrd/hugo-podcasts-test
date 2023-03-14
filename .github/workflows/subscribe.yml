@@ -32,6 +32,7 @@ jobs:
       title: ${{ steps.params.outputs.title }}
       website: ${{ steps.params.outputs.website }}
       file: ${{ steps.params.outputs.file }}
+      action: ${{ steps.params.outputs.action }}
     steps:
     - uses: actions/checkout@v3
     - name: Set parameters
@@ -59,6 +60,7 @@ jobs:
         echo "title=${title}" >>"${GITHUB_OUTPUT}"
         echo "website=${website}" >>"${GITHUB_OUTPUT}"
         echo "file=${file}" >>"${GITHUB_OUTPUT}"
+        echo "action=${action}" >>"${GITHUB_OUTPUT}"
   subscribe:
     needs: setup
     if: needs.setup.outputs.url
@@ -109,3 +111,42 @@ jobs:
           ```
         labels: |
           feeds
+  create:
+    needs: setup
+    if: needs.setup.outputs.action == 'create-feed'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Create new podcast index
+      env:
+        FEED_ISSUE: issue.txt
+      run: |
+        printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
+        make feed
+        title="$(./bin/get-key-from-issue Title "${FEED_ISSUE}")"
+        echo "title=${title}" >>"${GITHUB_OUTPUT}"
+        delimiter="$(openssl rand -hex 8)"
+        echo "contents<<${delimiter}" >>"${GITHUB_OUTPUT}"
+        ./bin/get-key-from-issue Description "${FEED_ISSUE}" >>"${GITHUB_OUTPUT}"
+        echo "${delimiter}" >>"${GITHUB_OUTPUT}"
+      id: feed
+    - name: Validate the changes
+      run: make build
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v4
+      with:
+        add-paths: |
+          src/content
+        branch-suffix: timestamp
+        commit-message: |
+          feat: create new feed; ${{ steps.feed.outputs.title }}
+
+          Fix #${{ github.event.issue.number }}
+        delete-branch: true
+        title: 'feat: create new feed; ${{ steps.feed.outputs.title }}'
+        body: |
+          # ${{ steps.feed.outputs.title }}
+
+          ${{ steps.feed.outputs.contents }}
+        labels: |
+          create-feed
