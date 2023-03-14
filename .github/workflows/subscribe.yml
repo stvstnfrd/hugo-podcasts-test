@@ -115,7 +115,7 @@ jobs:
         labels: |
           feeds
   create:
-    if: ${{ (github.event.action == 'reopened' || github.event.action == 'opened') && startsWith(github.event.issue.title, format('create{0} ', ':') }}
+    if: ${{ (github.event.action == 'reopened' || github.event.action == 'opened') && startsWith(github.event.issue.title, format('create{0} ', ':')) }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
