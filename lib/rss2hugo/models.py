@@ -8,6 +8,7 @@ from xml.etree import ElementTree as ET
 import frontmatter
 import requests
 
+from rss2hugo.github import Issue
 from rss2hugo.log import get_logger
 from rss2hugo.markdown import HugoFeedDocument
 from rss2hugo.pandoc import normalize_markup
@@ -392,23 +393,10 @@ class Feed(frontmatter.Post):
 
     @classmethod
     def from_issue(cls, issue_file):
-        with open(issue_file) as _file:
-            contents = _file.readlines()
-        inside = None
-        data = {}
-        for line in contents:
-            if line.startswith('### '):
-                line = line[4:-1]
-                line = line.lower()
-                if inside:
-                    data[inside] = '\n'.join(data[inside][1:-1])
-                inside = line
-                data[inside] = []
-            elif inside:
-                line = line[:-1]
-                data[inside].append(line)
-        data[inside] = '\n'.join(data[inside][1:])
+        data = Issue.from_file(issue_file)
+        data = data.to_dict()
         data = cls._clean_data(data)
+        del data['content']
         contents = data['description']
         del data['description']
         issue = cls(contents, **data)
