@@ -66,7 +66,7 @@ jobs:
         echo "action=${action}" >>"${GITHUB_OUTPUT}"
   subscribe:
     needs: setup
-    if: needs.setup.outputs.url
+    if: needs.setup.outputs.action == 'import-feed'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -115,11 +115,13 @@ jobs:
         labels: |
           feeds
   create:
-    if: ${{ (github.event.action == 'reopened' || github.event.action == 'opened') && startsWith(github.event.issue.title, format('create{0} ', ':')) }}
+    if: needs.setup.outputs.action == 'create-feed'
+    needs: setup
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Create new podcast index
+    - id: feed
+      name: Create new podcast index
       env:
         FEED_ISSUE: issue.txt
       run: |
@@ -131,7 +133,6 @@ jobs:
         ./bin/get-key-from-issue Description "${FEED_ISSUE}" >>"${GITHUB_OUTPUT}"
         echo "${delimiter}" >>"${GITHUB_OUTPUT}"
         make feed
-      id: feed
     - name: Validate the changes
       run: make build
     - name: Create Pull Request

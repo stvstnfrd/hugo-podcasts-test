@@ -4,6 +4,7 @@ BEGIN {
     line_number = 0
     delete lines[0]
     key = ARGV[1]
+    key = tolower(key)
     delete ARGV[1]
 }
 
