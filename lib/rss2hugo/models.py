@@ -382,6 +382,80 @@ class Episode(Parser):
     # pylint: enable=too-many-locals
 
 
+class Feed(frontmatter.Post):
+
+    @classmethod
+    def from_post(cls, index_file):
+        post = frontmatter.load(index_file)
+        feed = cls(**post.to_dict())
+        return feed
+
+    @classmethod
+    def from_issue(cls, issue_file):
+        with open(issue_file) as _file:
+            contents = _file.readlines()
+        inside = None
+        data = {}
+        for line in contents:
+            if line.startswith('### '):
+                line = line[4:-1]
+                line = line.lower()
+                if inside:
+                    data[inside] = '\n'.join(data[inside][1:-1])
+                inside = line
+                data[inside] = []
+            elif inside:
+                line = line[:-1]
+                data[inside].append(line)
+        data[inside] = '\n'.join(data[inside][1:])
+        data = cls._clean_data(data)
+        contents = data['description']
+        del data['description']
+        issue = cls(contents, **data)
+        return issue
+
+    @classmethod
+    def _merge(cls, source, destination):
+        for key, value in source.items():
+            if isinstance(value, dict):
+                destination[key] = destination.get(key, {})
+                cls._merge(value, destination[key])
+            else:
+                destination[key] = value
+        return destination
+
+    def merge(self, issue_file):
+        post = self
+        issue = self.from_issue(issue_file)
+        post_data = post.to_dict()
+        issue_data = issue.to_dict()
+        issue_data = Feed._merge(issue_data, post_data)
+        post = Feed(**post_data)
+        return post
+
+    def save(self, filename):
+        contents = frontmatter.dumps(self)
+        with open(filename, 'w') as _file:
+            _file.write(contents)
+
+    @staticmethod
+    def _clean_data(data):
+        tags = list(data['category'].split(', ') + data['categories'].split(', '))
+        del data['category']
+        del data['categories']
+        del data['action']
+        data['tags'] = tags
+        data['explicit'] = data['explicit'].lower() not in ['clean', 'no', 'false']
+        feed = {}
+        for key in data:
+            if key in ['explicit', 'type']:
+                feed[key] = data[key]
+        for key in feed:
+            del data[key]
+        data['feed'] = feed
+        return data
+
+
 class FeedDirectory(Parser):
     """
     Model a directory of an RSS feed

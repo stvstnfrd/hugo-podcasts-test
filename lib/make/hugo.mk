@@ -49,10 +49,11 @@ ifndef FEED_TITLE
 	exit 1
 else
 	test -d '$(HUGO_SITE_NAME)/content/podcasts' || mkdir -p '$(HUGO_SITE_NAME)/content/podcasts'
-	cd '$(HUGO_SITE_NAME)' && \
-		hugo new "$(FEED_INDEX_NAME)"
+	test -e '$(FEED_INDEX)' \
+	|| (cd '$(HUGO_SITE_NAME)' && \
+		hugo new "$(FEED_INDEX_NAME)")
 ifdef FEED_ISSUE
-	$(PYTHON) ./bin/update-feed-from-issue.py \
+	$(PYTHON) ./bin/update-feed-from-issue \
 		"$(FEED_INDEX)" "$(FEED_ISSUE)"
 endif
 endif
