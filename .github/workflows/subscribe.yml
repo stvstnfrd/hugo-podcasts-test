@@ -62,6 +62,7 @@ jobs:
         echo "website=${website}" >>"${GITHUB_OUTPUT}"
         echo "file=${file}" >>"${GITHUB_OUTPUT}"
         echo "action=${action}" >>"${GITHUB_OUTPUT}"
+        echo "${action}"
   subscribe:
     needs: setup
     if: needs.setup.outputs.url
