@@ -115,8 +115,7 @@ jobs:
         labels: |
           feeds
   create:
-    needs: setup
-    if: ${{ needs.setup.outputs.action == 'create-feed' }}
+    if: ${{ github.event_name == 'issues' && startsWith(github.event.issue.title, 'create: a new RSS feed')  }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
