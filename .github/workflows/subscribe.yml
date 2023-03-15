@@ -36,13 +36,11 @@ jobs:
       action: ${{ steps.params.outputs.action }}
     steps:
     - uses: actions/checkout@v3
-    - name: Install requirements
-      run: make requirements-python
     - name: Set parameters
       id: params
       env:
         FEED_ISSUE: issue.txt
-        GET_KEY_FROM_ISSUE: .venv/bin/python ./bin/get-key-from-issue
+        GET_KEY_FROM_ISSUE: ./bin/get-key-from-issue
         PYTHONPATH: lib
       run: |
         url=''
@@ -126,13 +124,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Install requirements
-      run: make requirements-python
     - id: feed
       name: Create new podcast index
       env:
         FEED_ISSUE: issue.txt
-        GET_KEY_FROM_ISSUE: .venv/bin/python ./bin/get-key-from-issue
+        GET_KEY_FROM_ISSUE: ./bin/get-key-from-issue
         PYTHONPATH: lib
       run: |
         printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
