@@ -14,11 +14,19 @@ endif
 GIT_BRANCH_CURRENT=$(shell $(GIT) branch --show-current)
 # Set these to a non-empty value to:
 ## Commit changes made by the target
+ifndef GIT_COMMIT
 GIT_COMMIT=
+endif
 ## Push commits to the remote repository
+ifndef GIT_PUSH
 GIT_PUSH=
+endif
+ifndef GIT_FETCH
 GIT_FETCH=
+endif
+ifndef GIT_BRANCH
 GIT_BRANCH=
+endif
 
 define assert-not-has-changes-saved
 @$(GIT) diff --cached --exit-code --quiet . \
