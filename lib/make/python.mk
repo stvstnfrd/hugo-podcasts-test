@@ -22,7 +22,6 @@ $(PYTHON) bin/parse-opml.py '$(OPML_FILE)' \
 	'$(1)' \
 	--content-directory '$(2)' \
 	--static-directory '$(3)' \
-	$(4) \
 ;
 endef
 
@@ -62,5 +61,5 @@ update-feeds: requirements-python
 	$(call assert-not-has-changes-to-file,dist/content)
 	$(call git-checkout-branch,$(GIT_BRANCH_CONTENT))
 	$(call git-fetch,$(GIT_BRANCH_CONTENT))
-	$(call create-feeds,./dist,content/content,static/static,--skip-images --skip-media)
+	$(call create-feeds,./dist,content/content,static/static)
 	$(call git-commit-path,dist/content,feat: update feeds)
