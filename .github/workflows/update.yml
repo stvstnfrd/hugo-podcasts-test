@@ -18,6 +18,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - name: Update feeds lists
+      env:
+        OPML_FILE: etc/feed.opml
+      run: |
+        make update-feeds
     - name: Fetch content updates
       env:
         GIT_COMMIT: 1
