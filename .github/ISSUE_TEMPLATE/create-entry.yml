@@ -271,14 +271,6 @@ body:
     validations:
       required: true
   - type: dropdown
-    attributes:
-      label: action
-      multiple: false
-      options:
-        - create-episode
-    validations:
-      required: true
-  - type: dropdown
     id: type
     attributes:
       label: Type
@@ -287,7 +279,7 @@ body:
       - full
       - bonus
       - trailer
-      description: What kind of show is it?
+      description: What kind of episode is it?
     validations:
       required: true
   - type: textarea
@@ -297,3 +289,27 @@ body:
       description: How would you briefly describe the episode?
     validations:
       required: false
+  - type: input
+    id: season_number
+    attributes:
+      label: Season Number
+      description: You only need to set this when you're releasing a new season.
+      placeholder: 1
+    validations:
+      required: false
+  - type: input
+    id: episode_number
+    attributes:
+      label: Episode Number
+      description: You only need to set this when you're skipping an episode.
+      placeholder: 1
+    validations:
+      required: false
+  - type: dropdown
+    attributes:
+      label: action
+      multiple: false
+      options:
+        - create-episode
+    validations:
+      required: true

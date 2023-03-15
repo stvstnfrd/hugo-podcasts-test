@@ -156,3 +156,43 @@ jobs:
           ${{ steps.feed.outputs.contents }}
         labels: |
           create-feed
+  create:
+    if: needs.setup.outputs.action == 'create-feed'
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - id: episode
+      name: Create new podcast index
+      env:
+        FEED_ISSUE: issue.txt
+        GET_KEY_FROM_ISSUE: ./bin/get-key-from-issue
+      run: |
+        printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
+        title="$(${GET_KEY_FROM_ISSUE} Title "${FEED_ISSUE}")"
+        echo "title=${title}" >>"${GITHUB_OUTPUT}"
+        delimiter="$(openssl rand -hex 8)"
+        echo "contents<<${delimiter}" >>"${GITHUB_OUTPUT}"
+        ${GET_KEY_FROM_ISSUE} Description "${FEED_ISSUE}" >>"${GITHUB_OUTPUT}"
+        echo "${delimiter}" >>"${GITHUB_OUTPUT}"
+        make episode
+    - name: Validate the changes
+      run: make build
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v4
+      with:
+        add-paths: |
+          src/content
+        branch-suffix: timestamp
+        commit-message: |
+          feat: create new episode; ${{ steps.episode.outputs.title }}
+
+          Fix #${{ github.event.issue.number }}
+        delete-branch: true
+        title: 'feat: create new episode; ${{ steps.episode.outputs.title }}'
+        body: |
+          # ${{ steps.episode.outputs.title }}
+
+          ${{ steps.episode.outputs.contents }}
+        labels: |
+          create-episode
