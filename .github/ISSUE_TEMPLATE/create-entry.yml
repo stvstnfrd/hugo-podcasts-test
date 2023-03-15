@@ -8,6 +8,16 @@ body:
     attributes:
       value: |
         # Request to create a new RSS feed entry
+  - type: dropdown
+    id: feed_title_clean
+    validations:
+      required: true
+    attributes:
+      label: Feed
+      description: Which feed are you adding the episode for?
+      multiple: false
+      options:
+      - my-show
   - type: input
     id: title
     attributes:
