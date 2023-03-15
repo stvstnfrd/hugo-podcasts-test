@@ -128,7 +128,6 @@ jobs:
       env:
         FEED_ISSUE: issue.txt
         GET_KEY_FROM_ISSUE: ./bin/get-key-from-issue
-        GIT_COMMIT: '1'
       run: |
         printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
         title="$(${GET_KEY_FROM_ISSUE} Title "${FEED_ISSUE}")"
@@ -138,6 +137,7 @@ jobs:
         ${GET_KEY_FROM_ISSUE} Description "${FEED_ISSUE}" >>"${GITHUB_OUTPUT}"
         echo "${delimiter}" >>"${GITHUB_OUTPUT}"
         make feed
+        git add .github
     - name: Validate the changes
       run: make build
     - name: Create Pull Request
