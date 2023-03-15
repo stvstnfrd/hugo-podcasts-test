@@ -156,7 +156,7 @@ jobs:
           ${{ steps.feed.outputs.contents }}
         labels: |
           create-feed
-  create:
+  create-episode:
     if: needs.setup.outputs.action == 'create-feed'
     needs: setup
     runs-on: ubuntu-latest
