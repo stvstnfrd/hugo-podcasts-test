@@ -128,6 +128,7 @@ jobs:
       env:
         FEED_ISSUE: issue.txt
         GET_KEY_FROM_ISSUE: ./bin/get-key-from-issue
+        GIT_COMMIT: '1'
       run: |
         printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
         title="$(${GET_KEY_FROM_ISSUE} Title "${FEED_ISSUE}")"
@@ -155,6 +156,8 @@ jobs:
           # ${{ steps.feed.outputs.title }}
 
           ${{ steps.feed.outputs.contents }}
+
+          Fix #${{ github.event.issue.number }}
         labels: |
           create-feed
   create-episode:
