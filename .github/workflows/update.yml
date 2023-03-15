@@ -33,10 +33,7 @@ jobs:
     - name: Validate the updated file
       run: make build
     - name: Push changes
-      run: |
-        git add dist/content
-        git commit -m 'feat: update feeds from OPML'
-        git push origin "$(git branch --show-current)"
+      run: git push origin "$(git branch --show-current)"
     - name: Archive artifact
       uses: actions/upload-pages-artifact@v1
       with:
