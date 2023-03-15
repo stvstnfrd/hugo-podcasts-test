@@ -158,7 +158,7 @@ jobs:
         labels: |
           create-feed
   create-episode:
-    if: needs.setup.outputs.action == 'create-feed'
+    if: needs.setup.outputs.action == 'create-episode'
     needs: setup
     runs-on: ubuntu-latest
     steps:
