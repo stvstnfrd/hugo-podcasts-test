@@ -17,6 +17,15 @@ $(PYTHON) bin/parse-feed.py '$(1)' \
 ;
 endef
 
+define create-feeds
+$(PYTHON) bin/parse-opml.py '$(OPML_FILE)' \
+	'$(1)' \
+	--content-directory '$(2)' \
+	--static-directory '$(3)' \
+	$(4) \
+;
+endef
+
 .PHONY: requirements-python
 requirements-python: $(PYTHON_REQUIREMENTS_OUTPUT) requirements-system  ### Create a new virtualenv and install packages
 $(PYTHON_REQUIREMENTS_OUTPUT): $(PYTHON_REQUIREMENTS_INPUT)
@@ -49,4 +58,9 @@ endif
 
 .PHONY: update-feeds
 update-feeds: requirements-python
-	$(PYTHON) bin/parse-opml.py "$(OPML_FILE)" dist --content-directory content/content
+	$(call assert-not-has-changes-saved,)
+	$(call assert-not-has-changes-to-file,dist/content)
+	$(call git-checkout-branch,$(GIT_BRANCH_CONTENT))
+	$(call git-fetch,$(GIT_BRANCH_CONTENT))
+	$(call create-feeds,./dist,content/content,static/static,--skip-images --skip-media)
+	$(call git-commit-path,dist/content,feat: update feeds)
