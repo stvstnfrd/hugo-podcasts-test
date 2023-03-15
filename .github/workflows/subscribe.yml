@@ -40,7 +40,6 @@ jobs:
       env:
         FEED_ISSUE: issue.txt
         GET_KEY_FROM_ISSUE: ./bin/get-key-from-issue
-        PYTHONPATH: lib
       run: |
         url=''
         action=''
@@ -128,7 +127,6 @@ jobs:
       env:
         FEED_ISSUE: issue.txt
         GET_KEY_FROM_ISSUE: ./bin/get-key-from-issue
-        PYTHONPATH: lib
       run: |
         printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
         title="$(${GET_KEY_FROM_ISSUE} Title "${FEED_ISSUE}")"
