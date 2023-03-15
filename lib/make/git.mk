@@ -14,7 +14,7 @@ endif
 GIT_BRANCH_CURRENT=$(shell $(GIT) branch --show-current)
 # Set these to a non-empty value to:
 ## Commit changes made by the target
-GIT_COMMIT=0
+GIT_COMMIT=
 ## Push commits to the remote repository
 GIT_PUSH=
 GIT_FETCH=
