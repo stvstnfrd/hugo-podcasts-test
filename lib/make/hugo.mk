@@ -6,6 +6,9 @@ HUGO_CONFIG_FILE=$(HUGO_SITE_NAME)/config.yaml
 ifndef EPISODE_TITLE
 EPISODE_TITLE=New Episode
 endif
+ifndef TMP
+TMP=./tmp
+endif
 
 .PHONY: serve
 serve: requirements-system  ## Serve up a preview instance of the site
@@ -57,6 +60,10 @@ ifndef FEED_TITLE
 	@echo "Usage: make feed FEED_ISSUE='./path/to/github-issue.markdown'"
 	exit 1
 else
+	$(call assert-not-has-changes-saved,)
+	$(call assert-not-has-changes-to-file,dist/content)
+	$(call git-checkout-branch,$(GIT_BRANCH_CONTENT))
+	$(call git-fetch,$(GIT_BRANCH_CONTENT))
 	test -d '$(HUGO_SITE_NAME)/content/podcasts' || mkdir -p '$(HUGO_SITE_NAME)/content/podcasts'
 	test -e '$(FEED_INDEX)' \
 	|| (cd '$(HUGO_SITE_NAME)' && \
@@ -65,6 +72,13 @@ ifdef FEED_ISSUE
 	$(PYTHON) ./bin/update-feed-from-issue \
 		"$(FEED_INDEX)" "$(FEED_ISSUE)"
 endif
+	./bin/add-feed-to-issue-template .github/ISSUE_TEMPLATE/create-entry.yml '$(FEED_TITLE_CLEAN)' >'$(TMP)/create-entry.yml'
+	mv '$(TMP)/create-entry.yml' '.github/ISSUE_TEMPLATE/create-entry.yml'
+ifeq (1,$(GIT_COMMIT))
+	git add .github/ISSUE_TEMPLATE/create-entry.yml
+endif
+	$(call git-commit-path,dist/content,feat: update feeds)
+
 endif
 
 .PHONY: episode
