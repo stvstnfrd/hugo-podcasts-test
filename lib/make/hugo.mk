@@ -68,7 +68,7 @@ endif
 endif
 
 .PHONY: episode
-episode:  ## Create a new episode
+episode: requirements-python  ## Create a new episode
 ifndef FEED_TITLE
 	@echo "Usage: make episode FEED_TITLE='My Podcast Name'" EPISODE_TITLE='My Episode Title'
 	@echo "Usage: make episode FEED_ISSUE='./path/to/github-issue.markdown'"
