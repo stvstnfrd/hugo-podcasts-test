@@ -25,3 +25,21 @@ jobs:
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v1
+  uploads:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Extract branch name
+      id: branch
+      shell: bash
+      run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >>"${GITHUB_OUTPUT}"
+    - name: Ensure we have a branch for uploads
+      env:
+        BRANCH_UPLOADS: uploads
+        REMOTE: origin
+      run: |
+        if ! git branch --all | grep --quiet "remotes/${REMOTE}/${BRANCH_UPLOADS}"; then
+            git branch "${BRANCH_UPLOADS}" "${REMOTE}/${{ steps.branch.outputs.branch }}"
+            git push "${REMOTE}" "${BRANCH_UPLOADS}"
+        fi
