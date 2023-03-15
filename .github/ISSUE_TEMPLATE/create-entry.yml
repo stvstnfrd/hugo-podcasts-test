@@ -16,7 +16,8 @@ body:
       label: Feed
       description: Which feed are you adding the episode for?
       multiple: false
-      options: []
+      options:
+      - my-feed
   - type: input
     id: title
     attributes:
