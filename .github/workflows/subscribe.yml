@@ -42,7 +42,8 @@ jobs:
       id: params
       env:
         FEED_ISSUE: issue.txt
-        GET_KEY_FROM_ISSUE: PYTHONPATH=lib .venv/bin/python ./bin/get-key-from-issue
+        GET_KEY_FROM_ISSUE: .venv/bin/python ./bin/get-key-from-issue
+        PYTHONPATH: lib
       run: |
         url=''
         action=''
@@ -129,7 +130,8 @@ jobs:
       name: Create new podcast index
       env:
         FEED_ISSUE: issue.txt
-        GET_KEY_FROM_ISSUE: PYTHONPATH=lib .venv/bin/python ./bin/get-key-from-issue
+        GET_KEY_FROM_ISSUE: .venv/bin/python ./bin/get-key-from-issue
+        PYTHONPATH: lib
       run: |
         printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
         title="$(${GET_KEY_FROM_ISSUE} Title "${FEED_ISSUE}")"
