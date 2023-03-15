@@ -1,16 +1,17 @@
 include lib/options.mk
 
 GIT=git
-GIT_REMOTE_CONTENT=origin
-ifndef GIT_BRANCH_CONTENT
-GIT_BRANCH_CONTENT=main
-endif
+GIT_REMOTE_CONTENT ?= origin
+GIT_BRANCH_CONTENT ?= $(if $(shell git rev-parse $(GIT_REMOTE_CONTENT)/master >/dev/null 2>&1 && echo 1),master,main)
 ifndef GIT_BRANCH_STATIC
 GIT_BRANCH_STATIC=$(GIT_BRANCH_CONTENT)
 endif
 ifndef GIT_REMOTE_STATIC
 GIT_REMOTE_STATIC=$(GIT_REMOTE_CONTENT)
 endif
+GIT_REMOTE_UPLOAD ?= $(GIT_REMOTE_STATIC)
+GIT_BRANCH_UPLOAD ?= uploads
+GIT_DIR_UPLOAD ?= dist/uploads
 GIT_BRANCH_CURRENT=$(shell $(GIT) branch --show-current)
 # Set these to a non-empty value to:
 ## Commit changes made by the target
@@ -70,9 +71,44 @@ define git-commit-path
 	fi
 endef
 
+.PHONY: git-branch-on-remote-uploads
+git-branch-on-remote-uploads: .git/refs/remotes/$(GIT_REMOTE_UPLOAD)/$(GIT_BRANCH_UPLOAD)
+.git/refs/remotes/$(GIT_REMOTE_UPLOAD)/$(GIT_BRANCH_UPLOAD):
+	$(GIT) fetch '$(GIT_REMOTE_UPLOAD)' || true
+	if [ ! -e '$(@)' ]; then \
+		$(GIT) branch '$(GIT_BRANCH_UPLOAD)' '$(GIT_REMOTE_STATIC)/$(GIT_BRANCH_STATIC)'; \
+		$(GIT) push '$(GIT_REMOTE_UPLOAD)' '$(GIT_BRANCH_UPLOAD)'; \
+	fi
+
+
 define git-fetch
 	if [ "$(GIT_FETCH)" = 1 ]; then \
 		"$(GIT)" fetch origin; \
 		"$(GIT)" rebase "origin/$(1)"; \
 	fi
 endef
+
+define git-pluck-file
+	$(GIT) fetch '$(1)'
+	$(GIT) checkout '$(1)/$(2)' -- '$(3)'
+	$(GIT) mv '$(3)' '$(4)'
+endef
+
+.PHONY: git-cleanup-uploads
+git-cleanup-uploads:  ### Cleanup the uploads branch
+	$(GIT) fetch --prune '$(GIT_REMOTE_UPLOAD)'
+	$(GIT) stash
+	$(GIT) checkout -B '$(GIT_BRANCH_UPLOAD)' '$(GIT_REMOTE_UPLOAD)/$(GIT_BRANCH_UPLOAD)'
+	$(GIT) rebase '$(GIT_REMOTE_STATIC)/$(GIT_BRANCH_STATIC)'
+ifdef $(EPISODE_ATTACHMENT)
+	$(GIT) rm '$(GIT_DIR_UPLOAD)/$(EPISODE_ATTACHMENT)'
+	$(GIT) commit -m 'chore: remove used attachment'
+endif
+ifdef $(EPISODE_ARTWORK)
+	$(GIT) rm '$(GIT_DIR_UPLOAD)/$(EPISODE_ARTWORK)'
+	$(GIT) commit -m 'chore: remove used artwork'
+endif
+	$(GIT) reset --soft "$$($(GIT) merge-base '$(GIT_REMOTE_STATIC)/$(GIT_BRANCH_STATIC)' HEAD)"
+	$(GIT) commit -m 'chore: squash uploads'
+	$(GIT) checkout '$(GIT_BRANCH_CURRENT)'
+	$(GIT) stash pop

@@ -98,6 +98,12 @@ Follow the steps above (for separate remotes and branches):
 - Run the shell commands from the `Remote` section;
     - you don't need to run the `Branch` section.
 
+# Links
+
+## Upload
+
+[Upload](../../upload/uploads/dist/uploads) a new episode file.
+
 
 # References
 
