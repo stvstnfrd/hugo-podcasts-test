@@ -1,11 +1,9 @@
-#!/bin/sh
+#!/usr/bin/awk -f
 #h NAME:
 #h 	get-key-from-issue
 #h
 #h SYNOPSIS:
 #h 	get-key-from-issue KEY-NAME FILE-NAME
-#h
-#h 	See complete help with `get-key-from-issue -h`.
 #h
 #h DESCRIPTION:
 #h 	Perform a key/value lookup from a GitHub Issues Form Template markdown file
@@ -29,12 +27,40 @@
 #h 	value2
 #h 	```
 #
-set -aeu
-while getopts ":h" option; do case ${option} in h) grep '^#h' "${0}" | sed 's/^#h \?//g'; exit;; *) ;; esac; done
+BEGIN {
+    line_number = 0
+    delete lines[0]
+    key = ARGV[1]
+    key = tolower(key)
+    delete ARGV[1]
+}
 
-key="${1}"
-file="${2}"
-flags='--max-count=1 --after-context=2 -i'
-# shellcheck disable=SC2086
-value="$(grep ${flags} "^### ${key}$" "${file}" | tail --lines=1)"
-echo "${value}"
+/^### / {
+    if (line_number > 0) {
+        exit
+    }
+    gsub(/^### /, "")
+    _key = tolower($0)
+    if (_key == key) {
+        line_number = 1
+    } else {
+        line_number = 0
+    }
+    next
+}
+
+!/^### / {
+    if (line_number > 0) {
+        lines[line_number-1] = $0
+        line_number = line_number + 1
+    }
+}
+
+END {
+    for (i=1; i<line_number-2; i++) {
+        print lines[i]
+    }
+    if (lines[i] != "") {
+        print lines[i]
+    }
+}

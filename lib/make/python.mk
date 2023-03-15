@@ -3,7 +3,9 @@ PYTHON_VENV_BIN=$(PYTHON_VENV)/bin
 PYTHON_LIB_PATH=./lib
 PYTHON_LIB=PYTHONPATH=$(PYTHON_LIB_PATH)
 PYTHON=$(PYTHON_LIB) $(PYTHON_VENV_BIN)/python
-PYTHON_REQUIREMENTS=./lib/requirements.txt
+PYTHON_REQUIREMENTS_INPUT=./lib/requirements.txt
+PYTHON_REQUIREMENTS_OUTPUT_DIRECTORY=tmp
+PYTHON_REQUIREMENTS_OUTPUT=$(PYTHON_REQUIREMENTS_OUTPUT_DIRECTORY)/$(notdir $(PYTHON_REQUIREMENTS_INPUT))
 PIP=$(PYTHON_VENV_BIN)/pip
 PIP_INSTALL=$(PIP) install
 
@@ -15,10 +17,21 @@ $(PYTHON) bin/parse-feed.py '$(1)' \
 ;
 endef
 
+define create-feeds
+$(PYTHON) bin/parse-opml.py '$(OPML_FILE)' \
+	'$(1)' \
+	--content-directory '$(2)' \
+	--static-directory '$(3)' \
+;
+endef
+
 .PHONY: requirements-python
-requirements-python: requirements-system  ### Create a new virtualenv and install packages
-	test -d ./.venv || python3 -m venv ./.venv
-	./.venv/bin/pip install -r "$(PYTHON_REQUIREMENTS)"
+requirements-python: $(PYTHON_REQUIREMENTS_OUTPUT) requirements-system  ### Create a new virtualenv and install packages
+$(PYTHON_REQUIREMENTS_OUTPUT): $(PYTHON_REQUIREMENTS_INPUT)
+	test -d '$(PYTHON_VENV)' || python3 -m venv '$(PYTHON_VENV)'
+	$(PIP) install -r "$(PYTHON_REQUIREMENTS_INPUT)"
+	test -d '$(PYTHON_REQUIREMENTS_OUTPUT_DIRECTORY)' || mkdir '$(PYTHON_REQUIREMENTS_OUTPUT_DIRECTORY)'
+	cp '$(<)' '$(@)'
 
 .PHONY: content
 content: requirements-python  ## Update content/metadata for feeds
@@ -43,4 +56,9 @@ endif
 
 .PHONY: update-feeds
 update-feeds: requirements-python
-	$(PYTHON) bin/parse-opml.py "$(OPML_FILE)" dist --content-directory content/content
+	$(call assert-not-has-changes-saved,)
+	$(call assert-not-has-changes-to-file,dist/content)
+	$(call git-checkout-branch,$(GIT_BRANCH_CONTENT))
+	$(call git-fetch,$(GIT_BRANCH_CONTENT))
+	$(call create-feeds,./dist,content/content,static/static)
+	$(call git-commit-path,dist/content,feat: update feeds)
