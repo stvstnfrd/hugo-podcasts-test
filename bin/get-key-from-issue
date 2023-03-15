@@ -1,5 +1,32 @@
 #!/usr/bin/awk -f
-
+#h NAME:
+#h 	get-key-from-issue
+#h
+#h SYNOPSIS:
+#h 	get-key-from-issue KEY-NAME FILE-NAME
+#h
+#h DESCRIPTION:
+#h 	Perform a key/value lookup from a GitHub Issues Form Template markdown file
+#h
+#h EXAMPLES:
+#h 	get-key-from-issue url ./etc/issue.markdown
+#h
+#h EXIT STATUS:
+#h 	0
+#h
+#h FILES:
+#h 	Input FILE-NAME of the form:
+#h
+#h 	```markdown
+#h 	### key1
+#h 	
+#h 	value1
+#h 	
+#h 	### key2
+#h 	
+#h 	value2
+#h 	```
+#
 BEGIN {
     line_number = 0
     delete lines[0]
