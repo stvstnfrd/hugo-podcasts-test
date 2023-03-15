@@ -36,18 +36,23 @@ jobs:
       action: ${{ steps.params.outputs.action }}
     steps:
     - uses: actions/checkout@v3
+    - name: Install requirements
+      run: make requirements-python
     - name: Set parameters
       id: params
+      env:
+        FEED_ISSUE: issue.txt
+        GET_KEY_FROM_ISSUE: PYTHONPATH=lib .venv/bin/python ./bin/get-key-from-issue
       run: |
         url=''
         action=''
         if [ "${GITHUB_EVENT_NAME}" = 'issues' ]; then
-          printf '%s\n' '${{ github.event.issue.body }}' >issue.txt
-          action="$(./bin/get-key-from-issue Action issue.txt)"
+          printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
+          action="$(${GET_KEY_FROM_ISSUE} Action "${FEED_ISSUE}")"
           if [ "${action}" = import-feed ]; then
-            url="$(./bin/get-key-from-issue URL issue.txt)"
-            title="$(./bin/get-key-from-issue Title issue.txt)"
-            website="$(./bin/get-key-from-issue Website issue.txt)"
+            url="$(${GET_KEY_FROM_ISSUE} URL "${FEED_ISSUE}")"
+            title="$(${GET_KEY_FROM_ISSUE} Title "${FEED_ISSUE}")"
+            website="$(${GET_KEY_FROM_ISSUE} Website "${FEED_ISSUE}")"
             file='etc/feed.opml'
           fi
         elif  [ "${GITHUB_EVENT_NAME}" = 'workflow_dispatch' ]; then
@@ -124,13 +129,14 @@ jobs:
       name: Create new podcast index
       env:
         FEED_ISSUE: issue.txt
+        GET_KEY_FROM_ISSUE: PYTHONPATH=lib .venv/bin/python ./bin/get-key-from-issue
       run: |
         printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
-        title="$(./bin/get-key-from-issue Title "${FEED_ISSUE}")"
+        title="$(${GET_KEY_FROM_ISSUE} Title "${FEED_ISSUE}")"
         echo "title=${title}" >>"${GITHUB_OUTPUT}"
         delimiter="$(openssl rand -hex 8)"
         echo "contents<<${delimiter}" >>"${GITHUB_OUTPUT}"
-        ./bin/get-key-from-issue Description "${FEED_ISSUE}" >>"${GITHUB_OUTPUT}"
+        ${GET_KEY_FROM_ISSUE} Description "${FEED_ISSUE}" >>"${GITHUB_OUTPUT}"
         echo "${delimiter}" >>"${GITHUB_OUTPUT}"
         make feed
     - name: Validate the changes
