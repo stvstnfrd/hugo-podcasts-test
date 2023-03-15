@@ -72,14 +72,15 @@ ifdef FEED_ISSUE
 	$(PYTHON) ./bin/update-feed-from-issue \
 		"$(FEED_INDEX)" "$(FEED_ISSUE)"
 endif
-	./bin/add-feed-to-issue-template .github/ISSUE_TEMPLATE/create-entry.yml '$(FEED_TITLE_CLEAN)' >'$(TMP)/create-entry.yml'
-	mv '$(TMP)/create-entry.yml' '.github/ISSUE_TEMPLATE/create-entry.yml'
-ifeq (1,$(GIT_COMMIT))
-	git add .github/ISSUE_TEMPLATE/create-entry.yml
+	grep --quiet '^      - $(FEED_TITLE_CLEAN)$$' .github/ISSUE_TEMPLATE/create-entry.yml || ( \
+		./bin/add-feed-to-issue-template .github/ISSUE_TEMPLATE/create-entry.yml '$(FEED_TITLE_CLEAN)' >'$(TMP)/create-entry.yml'; \
+		mv '$(TMP)/create-entry.yml' '.github/ISSUE_TEMPLATE/create-entry.yml'; \
+		test "$(GIT_COMMIT)" != 1 || \
+			git add .github/ISSUE_TEMPLATE/create-entry.yml; \
+	)
 endif
 	$(call git-commit-path,dist/content,feat: update feeds)
 
-endif
 
 .PHONY: episode
 episode: requirements-python  ## Create a new episode
