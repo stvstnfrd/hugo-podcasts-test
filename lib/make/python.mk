@@ -3,7 +3,9 @@ PYTHON_VENV_BIN=$(PYTHON_VENV)/bin
 PYTHON_LIB_PATH=./lib
 PYTHON_LIB=PYTHONPATH=$(PYTHON_LIB_PATH)
 PYTHON=$(PYTHON_LIB) $(PYTHON_VENV_BIN)/python
-PYTHON_REQUIREMENTS=./lib/requirements.txt
+PYTHON_REQUIREMENTS_INPUT=./lib/requirements.txt
+PYTHON_REQUIREMENTS_OUTPUT_DIRECTORY=tmp
+PYTHON_REQUIREMENTS_OUTPUT=$(PYTHON_REQUIREMENTS_OUTPUT_DIRECTORY)/$(notdir $(PYTHON_REQUIREMENTS_INPUT))
 PIP=$(PYTHON_VENV_BIN)/pip
 PIP_INSTALL=$(PIP) install
 
@@ -16,9 +18,13 @@ $(PYTHON) bin/parse-feed.py '$(1)' \
 endef
 
 .PHONY: requirements-python
-requirements-python: requirements-system  ### Create a new virtualenv and install packages
-	test -d ./.venv || python3 -m venv ./.venv
-	./.venv/bin/pip install -r "$(PYTHON_REQUIREMENTS)"
+requirements-python: $(PYTHON_REQUIREMENTS_OUTPUT) requirements-system  ### Create a new virtualenv and install packages
+$(PYTHON_REQUIREMENTS_OUTPUT): $(PYTHON_REQUIREMENTS_INPUT)
+	echo $(PYTHON_REQUIREMENTS_INPUT)
+	test -d '$(PYTHON_VENV)' || python3 -m venv '$(PYTHON_VENV)'
+	$(PIP) install -r "$(PYTHON_REQUIREMENTS_INPUT)"
+	test -d '$(PYTHON_REQUIREMENTS_OUTPUT_DIRECTORY)' || mkdir '$(PYTHON_REQUIREMENTS_OUTPUT_DIRECTORY)'
+	cp '$(<)' '$(@)'
 
 .PHONY: content
 content: requirements-python  ## Update content/metadata for feeds
