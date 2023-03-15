@@ -275,7 +275,7 @@ body:
       label: action
       multiple: false
       options:
-        - create-feed
+        - create-episode
     validations:
       required: true
   - type: dropdown
