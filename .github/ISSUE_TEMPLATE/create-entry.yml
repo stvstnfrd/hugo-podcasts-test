@@ -304,7 +304,7 @@ body:
     attributes:
       label: Season Number
       description: You only need to set this when you're releasing a new season.
-      placeholder: 1
+      placeholder: '1'
     validations:
       required: false
   - type: input
@@ -312,7 +312,7 @@ body:
     attributes:
       label: Episode Number
       description: You only need to set this when you're skipping an episode.
-      placeholder: 1
+      placeholder: '1'
     validations:
       required: false
   - type: dropdown
