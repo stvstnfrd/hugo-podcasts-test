@@ -12,11 +12,11 @@ feed:
   editor:
     email: <no value>
     name: <no value>
-  explicit: true
+  explicit: false
   language: en
   status: ongoing
   ttl: 1440
-  type: serial
+  type: episodic
 language: en
 tags:
 - Arts
@@ -24,4 +24,4 @@ tags:
 title: My Feed
 ---
 
-blah blah
+![ComputingBritain](https://user-images.githubusercontent.com/7300975/225450717-ca6108d0-9530-4a18-ad30-c5acaa9a9865.jpg)
