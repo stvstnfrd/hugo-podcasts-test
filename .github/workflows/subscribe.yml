@@ -3,6 +3,7 @@ on:
   issues:
     types:
     - opened
+    - reopened
   workflow_dispatch:
     inputs:
       url:
@@ -33,6 +34,9 @@ jobs:
       website: ${{ steps.params.outputs.website }}
       file: ${{ steps.params.outputs.file }}
       action: ${{ steps.params.outputs.action }}
+      description: ${{ steps.params.outputs.description }}
+      attachment: ${{ steps.params.outputs.attachment }}
+      feed_title: ${{ steps.params.outputs.feed_title }}
     steps:
     - uses: actions/checkout@v3
     - name: Set parameters
@@ -43,15 +47,22 @@ jobs:
       run: |
         url=''
         action=''
+        description=''
+        feed_title=''
+        attachment=''
         if [ "${GITHUB_EVENT_NAME}" = 'issues' ]; then
           printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
           action="$(${GET_KEY_FROM_ISSUE} Action "${FEED_ISSUE}")"
-          if [ "${action}" = import-feed ]; then
-            url="$(${GET_KEY_FROM_ISSUE} URL "${FEED_ISSUE}")"
-            title="$(${GET_KEY_FROM_ISSUE} Title "${FEED_ISSUE}")"
-            website="$(${GET_KEY_FROM_ISSUE} Website "${FEED_ISSUE}")"
-            file='etc/feed.opml'
-          fi
+          delimiter="$(openssl rand -hex 8)"
+          echo "description<<${delimiter}" >>"${GITHUB_OUTPUT}"
+          ${GET_KEY_FROM_ISSUE} Description "${FEED_ISSUE}" >>"${GITHUB_OUTPUT}"
+          echo "${delimiter}" >>"${GITHUB_OUTPUT}"
+          url="$(${GET_KEY_FROM_ISSUE} URL "${FEED_ISSUE}")"
+          title="$(${GET_KEY_FROM_ISSUE} Title "${FEED_ISSUE}")"
+          website="$(${GET_KEY_FROM_ISSUE} Website "${FEED_ISSUE}")"
+          feed_title="$(${GET_KEY_FROM_ISSUE} 'Feed Title' "${FEED_ISSUE}")"
+          attachment="$(${GET_KEY_FROM_ISSUE} Attachment "${FEED_ISSUE}")"
+          file='etc/feed.opml'
         elif  [ "${GITHUB_EVENT_NAME}" = 'workflow_dispatch' ]; then
           url="${{ inputs.url }}"
           title="${{ inputs.title }}"
@@ -66,6 +77,8 @@ jobs:
         echo "website=${website}" >>"${GITHUB_OUTPUT}"
         echo "file=${file}" >>"${GITHUB_OUTPUT}"
         echo "action=${action}" >>"${GITHUB_OUTPUT}"
+        echo "feed_title=${feed_title}" >>"${GITHUB_OUTPUT}"
+        echo "attachment=${attachment}" >>"${GITHUB_OUTPUT}"
   subscribe:
     needs: setup
     if: needs.setup.outputs.action == 'import-feed'
@@ -88,7 +101,7 @@ jobs:
         title="${title:-${{ needs.setup.outputs.url }}}"
         echo "title=${title}" >>"${GITHUB_OUTPUT}"
         delimiter="$(openssl rand -hex 8)"
-        echo "contents<<${delimiter}" >>"${GITHUB_OUTPUT}"
+        echo "description<<${delimiter}" >>"${GITHUB_OUTPUT}"
         curl '${{ needs.setup.outputs.url }}' >input.xml
         xmllint --format input.xml >>"${GITHUB_OUTPUT}"
         echo "${delimiter}" >>"${GITHUB_OUTPUT}"
@@ -112,7 +125,7 @@ jobs:
 
           ## Preview
           ```xml
-          ${{ steps.feed.outputs.contents }}
+          ${{ steps.feed.outputs.description }}
           ```
         labels: |
           feeds
@@ -132,7 +145,7 @@ jobs:
         title="$(${GET_KEY_FROM_ISSUE} Title "${FEED_ISSUE}")"
         echo "title=${title}" >>"${GITHUB_OUTPUT}"
         delimiter="$(openssl rand -hex 8)"
-        echo "contents<<${delimiter}" >>"${GITHUB_OUTPUT}"
+        echo "description<<${delimiter}" >>"${GITHUB_OUTPUT}"
         ${GET_KEY_FROM_ISSUE} Description "${FEED_ISSUE}" >>"${GITHUB_OUTPUT}"
         echo "${delimiter}" >>"${GITHUB_OUTPUT}"
         make feed
@@ -142,6 +155,7 @@ jobs:
       uses: peter-evans/create-pull-request@v4
       with:
         add-paths: |
+          .github
           src/content
         branch-suffix: timestamp
         commit-message: |
@@ -153,6 +167,47 @@ jobs:
         body: |
           # ${{ steps.feed.outputs.title }}
 
-          ${{ steps.feed.outputs.contents }}
+          ${{ steps.feed.outputs.description }}
+
+          Fix #${{ github.event.issue.number }}
         labels: |
           create-feed
+  create-episode:
+    if: needs.setup.outputs.action == 'create-episode'
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - id: episode
+      name: Create new podcast index
+      env:
+        FEED_ISSUE: issue.txt
+        GET_KEY_FROM_ISSUE: ./bin/get-key-from-issue
+        EPISODE_TITLE: '${{ needs.setup.outputs.title }}'
+        FEED_TITLE: '${{ needs.setup.outputs.feed_title }}'
+        EPISODE_ATTACHMENT: '${{ needs.setup.outputs.attachment }}'
+      run: make episode
+    - name: Validate the changes
+      run: make build
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v4
+      with:
+        add-paths: |
+          src/content
+        branch-suffix: timestamp
+        commit-message: |
+          feat: create new episode; ${{ needs.setup.outputs.title }}
+
+          Fix #${{ github.event.issue.number }}
+        delete-branch: true
+        title: 'feat: create new episode; ${{ needs.setup.outputs.title }}'
+        body: |
+          # ${{ needs.setup.outputs.title }}
+
+          ${{ needs.setup.outputs.description }}
+        labels: |
+          create-episode
+    - name: Cleanup uploads
+      env:
+        EPISODE_ATTACHMENT: '${{ needs.setup.outputs.attachment }}'
+      run: make git-cleanup-uploads

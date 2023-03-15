@@ -1,0 +1,31 @@
+#!/usr/bin/awk -f
+# body[feed_title_clean]:attributes.option
+
+BEGIN {
+    looking = 1
+    feed = ARGV[2]
+    delete ARGV[2]
+}
+
+looking == 1 && /^body/ {
+    looking += 1
+}
+
+looking == 2 && /^ *id: *feed_title_clean$/ {
+    looking += 1
+}
+
+looking == 3 && /^ *attributes: *$/ {
+    looking += 1
+}
+
+looking == 4 && /^ *options: */ {
+    print "      options:"
+    print "      - " feed
+    looking += 1
+    next
+}
+
+{
+    print
+}

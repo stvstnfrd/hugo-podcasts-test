@@ -1,16 +1,17 @@
 include lib/options.mk
 
 GIT=git
-GIT_REMOTE_CONTENT=origin
-ifndef GIT_BRANCH_CONTENT
-GIT_BRANCH_CONTENT=main
-endif
+GIT_REMOTE_CONTENT ?= origin
+GIT_BRANCH_CONTENT ?= $(if $(shell git rev-parse $(GIT_REMOTE_CONTENT)/master >/dev/null 2>&1 && echo 1),master,main)
 ifndef GIT_BRANCH_STATIC
 GIT_BRANCH_STATIC=$(GIT_BRANCH_CONTENT)
 endif
 ifndef GIT_REMOTE_STATIC
 GIT_REMOTE_STATIC=$(GIT_REMOTE_CONTENT)
 endif
+GIT_REMOTE_UPLOAD ?= $(GIT_REMOTE_STATIC)
+GIT_BRANCH_UPLOAD ?= uploads
+GIT_DIR_UPLOAD ?= dist/uploads
 GIT_BRANCH_CURRENT=$(shell $(GIT) branch --show-current)
 # Set these to a non-empty value to:
 ## Commit changes made by the target
@@ -69,6 +70,16 @@ define git-commit-path
 		fi \
 	fi
 endef
+
+.PHONY: git-branch-on-remote-uploads
+git-branch-on-remote-uploads: .git/refs/remotes/$(GIT_REMOTE_UPLOAD)/$(GIT_BRANCH_UPLOAD)
+.git/refs/remotes/$(GIT_REMOTE_UPLOAD)/$(GIT_BRANCH_UPLOAD):
+	$(GIT) fetch '$(GIT_REMOTE_UPLOAD)' || true
+	if [ ! -e '$(@)' ]; then \
+		$(GIT) branch '$(GIT_BRANCH_UPLOAD)' '$(GIT_REMOTE_STATIC)/$(GIT_BRANCH_STATIC)'; \
+		$(GIT) push '$(GIT_REMOTE_UPLOAD)' '$(GIT_BRANCH_UPLOAD)'; \
+	fi
+
 
 define git-fetch
 	if [ "$(GIT_FETCH)" = 1 ]; then \

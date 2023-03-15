@@ -1,0 +1,35 @@
+name: Upload files
+permissions:
+  contents: write
+  id-token: write
+on:
+  push:
+    paths:
+    - dist/uploads/**
+    branches:
+    - uploads
+  workflow_dispatch:
+jobs:
+  uploads:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Extract branch name
+      id: branch
+      shell: bash
+      run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >>"${GITHUB_OUTPUT}"
+    - name: Commit Changes
+      env:
+        BRANCH_UPLOADS: uploads
+        REMOTE: origin
+        BRANCH_DEFAULT: master
+      run: |
+        git config --global user.name "${GITHUB_REPOSITORY%/*}"
+        git config --global user.email "${GITHUB_REPOSITORY%/*}@users.noreply.github.com"
+        git fetch "${REMOTE}"
+        git checkout -b local "${REMOTE}/${BRANCH_DEFAULT}"
+        ./bin/add-uploads-to-issue-template
+        git add .github
+        git commit -m 'chore: update upload list for issue templates'
+        git push "${REMOTE}" "local:${BRANCH_DEFAULT}"
