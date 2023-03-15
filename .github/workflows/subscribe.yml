@@ -137,13 +137,13 @@ jobs:
         ${GET_KEY_FROM_ISSUE} Description "${FEED_ISSUE}" >>"${GITHUB_OUTPUT}"
         echo "${delimiter}" >>"${GITHUB_OUTPUT}"
         make feed
-        git add .github
     - name: Validate the changes
       run: make build
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v4
       with:
         add-paths: |
+          .github
           src/content
         branch-suffix: timestamp
         commit-message: |
