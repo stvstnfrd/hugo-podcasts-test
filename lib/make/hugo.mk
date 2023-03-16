@@ -97,4 +97,8 @@ ifdef FEED_ISSUE
 	$(PYTHON) ./bin/update-episode-from-issue \
 		"$(EPISODE_INDEX)" "$(FEED_ISSUE)"
 endif
+ifdef EPISODE_ATTACHMENT
+	git checkout origin/uploads -- dist/uploads/$(EPISODE_ATTACHMENT)
+	git mv dist/uploads/$(EPISODE_ATTACHMENT) '$(dir $(EPISODE_INDEX))/HEARME.mp3'
+endif
 endif

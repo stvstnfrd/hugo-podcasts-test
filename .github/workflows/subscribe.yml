@@ -179,7 +179,8 @@ jobs:
         echo "contents<<${delimiter}" >>"${GITHUB_OUTPUT}"
         ${GET_KEY_FROM_ISSUE} Description "${FEED_ISSUE}" >>"${GITHUB_OUTPUT}"
         echo "${delimiter}" >>"${GITHUB_OUTPUT}"
-        make episode
+        attachment="$(${GET_KEY_FROM_ISSUE} Attachment "${FEED_ISSUE}")"
+        make episode EPISODE_ATTACHMENT="${attachment}"
     - name: Validate the changes
       run: make build
     - name: Create Pull Request
