@@ -25,6 +25,24 @@ body:
       placeholder: My Episode
     validations:
       required: true
+  - type: dropdown
+    id: attachment
+    validations:
+      required: true
+    attributes:
+      label: Attachment
+      description: Which file are you attaching?
+      multiple: false
+      options: []
+  - type: dropdown
+    id: artwork
+    validations:
+      required: false
+    attributes:
+      label: Artwork
+      description: Is there a cover image?
+      multiple: false
+      options: []
   - type: textarea
     id: description
     attributes:

@@ -1,32 +1,14 @@
-name: Publish updates to Github Pages
+name: Upload files
 permissions:
   contents: write
   id-token: write
-  pages: write
 on:
   push:
-    paths-ignore:
-    - etc/feed.opml
+    paths:
     - dist/uploads
     branches:
-    - main
-    - master
-  workflow_dispatch:
+    - uploads
 jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-    - name: Validate the updated file
-      run: make build
-    - name: Archive artifact
-      uses: actions/upload-pages-artifact@v1
-      with:
-        path: dist/public
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v1
   uploads:
     runs-on: ubuntu-latest
     steps:
@@ -45,3 +27,13 @@ jobs:
             git branch "${BRANCH_UPLOADS}" "${REMOTE}/${{ steps.branch.outputs.branch }}"
             git push "${REMOTE}" "${BRANCH_UPLOADS}"
         fi
+    - name: Add uploads to list
+      run: ./bin/add-uploads-to-issue-template
+    - name: Commit Changes
+      run: |
+        git config --global user.name "${GITHUB_REPOSITORY%/*}"
+        git config --global user.email "${GITHUB_REPOSITORY%/*}@users.noreply.github.com"
+        git checkout -b local origin/master
+        git add .github
+        git commit -m 'chore: update upload list for issue templates'
+        git push origin 'local:${{ steps.branch.outputs.branch }}'
