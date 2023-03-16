@@ -8,6 +8,11 @@ body:
     attributes:
       value: |
         # Request to create a new RSS feed entry
+
+        If you haven't yet, you'll need to upload any audio/image files;
+        you can use the link below:
+
+        [Upload Attachments here](../../upload/uploads/dist/uploads)
   - type: dropdown
     id: feed_title_clean
     validations:
