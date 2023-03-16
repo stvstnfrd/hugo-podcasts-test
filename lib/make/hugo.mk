@@ -98,6 +98,7 @@ ifdef FEED_ISSUE
 		"$(EPISODE_INDEX)" "$(FEED_ISSUE)"
 endif
 ifdef EPISODE_ATTACHMENT
+	git fetch origin
 	git checkout origin/uploads -- dist/uploads/$(EPISODE_ATTACHMENT)
 	git mv dist/uploads/$(EPISODE_ATTACHMENT) '$(dir $(EPISODE_INDEX))/HEARME.mp3'
 endif
