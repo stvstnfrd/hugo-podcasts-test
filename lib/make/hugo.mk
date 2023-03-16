@@ -95,8 +95,9 @@ ifdef FEED_ISSUE
 		"$(EPISODE_INDEX)" "$(FEED_ISSUE)"
 endif
 ifdef EPISODE_ATTACHMENT
-	git fetch origin
-	git checkout origin/uploads -- dist/uploads/$(EPISODE_ATTACHMENT)
-	git mv dist/uploads/$(EPISODE_ATTACHMENT) '$(dir $(EPISODE_INDEX))/HEARME.mp3'
+	$(call git-pluck-file,$(GIT_REMOTE_UPLOAD),$(GIT_BRANCH_UPLOAD),$(GIT_DIR_UPLOAD)/$(EPISODE_ATTACHMENT),$(dir $(EPISODE_INDEX))/HEARME.mp3)
+endif
+ifdef EPISODE_ARTWORK
+	$(call git-pluck-file,$(GIT_REMOTE_UPLOAD),$(GIT_BRANCH_UPLOAD),$(GIT_DIR_UPLOAD)/$(EPISODE_ARTWORK),$(dir $(EPISODE_INDEX))/cover.$(suffix $(EPISODE_ARTWORK)))
 endif
 endif

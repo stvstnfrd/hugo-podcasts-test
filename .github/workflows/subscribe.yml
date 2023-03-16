@@ -36,6 +36,7 @@ jobs:
       action: ${{ steps.params.outputs.action }}
       description: ${{ steps.params.outputs.description }}
       attachment: ${{ steps.params.outputs.attachment }}
+      artwork: ${{ steps.params.outputs.artwork }}
       feed_title: ${{ steps.params.outputs.feed_title }}
     steps:
     - uses: actions/checkout@v3
@@ -50,6 +51,7 @@ jobs:
         description=''
         feed_title=''
         attachment=''
+        artwork=''
         if [ "${GITHUB_EVENT_NAME}" = 'issues' ]; then
           printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
           action="$(${GET_KEY_FROM_ISSUE} Action "${FEED_ISSUE}")"
@@ -62,6 +64,7 @@ jobs:
           website="$(${GET_KEY_FROM_ISSUE} Website "${FEED_ISSUE}")"
           feed_title="$(${GET_KEY_FROM_ISSUE} 'Feed Title' "${FEED_ISSUE}")"
           attachment="$(${GET_KEY_FROM_ISSUE} Attachment "${FEED_ISSUE}")"
+          artwork="$(${GET_KEY_FROM_ISSUE} Artwork "${FEED_ISSUE}")"
           file='etc/feed.opml'
         elif  [ "${GITHUB_EVENT_NAME}" = 'workflow_dispatch' ]; then
           url="${{ inputs.url }}"
@@ -79,6 +82,7 @@ jobs:
         echo "action=${action}" >>"${GITHUB_OUTPUT}"
         echo "feed_title=${feed_title}" >>"${GITHUB_OUTPUT}"
         echo "attachment=${attachment}" >>"${GITHUB_OUTPUT}"
+        echo "artwork=${artwork}" >>"${GITHUB_OUTPUT}"
   subscribe:
     needs: setup
     if: needs.setup.outputs.action == 'import-feed'
@@ -177,6 +181,7 @@ jobs:
         EPISODE_TITLE: '${{ needs.setup.outputs.title }}'
         FEED_TITLE: '${{ needs.setup.outputs.feed_title }}'
         EPISODE_ATTACHMENT: '${{ needs.setup.outputs.attachment }}'
+        EPISODE_ARTWORK: '${{ needs.setup.outputs.artwork }}'
       run: make episode
     - name: Validate the changes
       run: make build

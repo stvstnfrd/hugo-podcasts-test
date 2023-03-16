@@ -87,3 +87,9 @@ define git-fetch
 		"$(GIT)" rebase "origin/$(1)"; \
 	fi
 endef
+
+define git-pluck-file
+	$(GIT) fetch '$(1)'
+	$(GIT) checkout '$(1)/$(2)' -- '$(3)'
+	$(GIT) mv '$(3)' '$(4)'
+endef
