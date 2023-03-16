@@ -19,22 +19,18 @@ jobs:
       id: branch
       shell: bash
       run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >>"${GITHUB_OUTPUT}"
-    - name: Ensure we have a branch for uploads
-      env:
-        BRANCH_UPLOADS: uploads
-        REMOTE: origin
-      run: |
-        if ! git branch --all | grep --quiet "remotes/${REMOTE}/${BRANCH_UPLOADS}"; then
-            git branch "${BRANCH_UPLOADS}" "${REMOTE}/${{ steps.branch.outputs.branch }}"
-            git push "${REMOTE}" "${BRANCH_UPLOADS}"
-        fi
     - name: Add uploads to list
       run: ./bin/add-uploads-to-issue-template
     - name: Commit Changes
+      env:
+        BRANCH_UPLOADS: uploads
+        REMOTE: origin
+        BRANCH_DEFAULT: master
       run: |
         git config --global user.name "${GITHUB_REPOSITORY%/*}"
         git config --global user.email "${GITHUB_REPOSITORY%/*}@users.noreply.github.com"
-        git checkout -b local origin/master
+        git fetch "${REMOTE}"
+        git checkout -b local "${REMOTE}/${BRANCH_DEFAULT}"
         git add .github
         git commit -m 'chore: update upload list for issue templates'
-        git push origin 'local:${{ steps.branch.outputs.branch }}'
+        git push "${REMOTE}" 'local:${{ steps.branch.outputs.branch }}'
