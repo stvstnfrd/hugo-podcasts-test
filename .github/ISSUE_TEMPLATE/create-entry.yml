@@ -38,7 +38,8 @@ body:
       label: Attachment
       description: Which file are you attaching?
       multiple: false
-      options: []
+      options:
+      - 'ComputingBritain-20150925-MobileRevolution.mp3'
   - type: dropdown
     id: artwork
     validations:
@@ -47,7 +48,8 @@ body:
       label: Artwork
       description: Is there a cover image?
       multiple: false
-      options: []
+      options:
+      - 'ComputingBritain-20150925-MobileRevolution.mp3'
   - type: textarea
     id: description
     attributes:
