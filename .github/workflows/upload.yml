@@ -8,6 +8,7 @@ on:
     - dist/uploads
     branches:
     - uploads
+  workflow_dispatch:
 jobs:
   uploads:
     runs-on: ubuntu-latest
