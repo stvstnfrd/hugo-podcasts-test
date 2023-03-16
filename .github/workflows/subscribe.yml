@@ -180,7 +180,13 @@ jobs:
         ${GET_KEY_FROM_ISSUE} Description "${FEED_ISSUE}" >>"${GITHUB_OUTPUT}"
         echo "${delimiter}" >>"${GITHUB_OUTPUT}"
         attachment="$(${GET_KEY_FROM_ISSUE} Attachment "${FEED_ISSUE}")"
-        make episode EPISODE_ATTACHMENT="${attachment}"
+        feed_title="$(${GET_KEY_FROM_ISSUE} 'Feed Title' "${FEED_ISSUE}")"
+        title="$(${GET_KEY_FROM_ISSUE} 'Title' "${FEED_ISSUE}")"
+        make episode \
+          EPISODE_ATTACHMENT="${attachment}" \
+          FEED_TITLE="${feed_title}" \
+          EPISODE_TITLE="${title}" \
+        ;
     - name: Validate the changes
       run: make build
     - name: Create Pull Request
