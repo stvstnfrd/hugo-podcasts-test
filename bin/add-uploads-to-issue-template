@@ -8,5 +8,13 @@ git diff --name-status --diff-filter=A \
 | xargs \
     awk -f bin/add-uploads-to-issue-template.awk \
         "${WORKFLOW}" \
+;
+git diff --name-status --diff-filter=A \
+    HEAD..origin/uploads -- dist/upload \
+| sed 's/^A\s*//' \
+| sed 's/.*\///; s/\n//g' \
+| xargs \
+    awk -f bin/add-uploads-to-issue-template.awk \
+        "${WORKFLOW}" \
 >"${WORKFLOW}.bak"
 mv "${WORKFLOW}.bak" "${WORKFLOW}"
