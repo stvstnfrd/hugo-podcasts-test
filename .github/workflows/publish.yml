@@ -41,6 +41,7 @@ jobs:
         BRANCH_UPLOADS: uploads
         REMOTE: origin
       run: |
+        git fetch "${REMOTE}"
         if ! git branch --all | grep --quiet "remotes/${REMOTE}/${BRANCH_UPLOADS}"; then
             git branch "${BRANCH_UPLOADS}" "${REMOTE}/${{ steps.branch.outputs.branch }}"
             git push "${REMOTE}" "${BRANCH_UPLOADS}"

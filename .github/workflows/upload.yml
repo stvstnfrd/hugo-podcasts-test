@@ -5,7 +5,7 @@ permissions:
 on:
   push:
     paths:
-    - dist/uploads
+    - dist/uploads/**
     branches:
     - uploads
   workflow_dispatch:
