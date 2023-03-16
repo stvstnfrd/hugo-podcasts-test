@@ -2,7 +2,7 @@
 set -eau
 WORKFLOW='.github/ISSUE_TEMPLATE/create-entry.yml'
 git diff --name-status --diff-filter=A \
-    HEAD..upstream/uploads -- dist/upload \
+    HEAD..origin/uploads -- dist/upload \
 | sed 's/^A\s*//' \
 | sed 's/.*\///; s/\n//g' \
 | xargs \
