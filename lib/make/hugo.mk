@@ -69,6 +69,7 @@ ifdef FEED_ISSUE
 		"$(FEED_INDEX)" "$(FEED_ISSUE)"
 endif
 	grep --quiet '^      - $(FEED_TITLE_CLEAN)$$' .github/ISSUE_TEMPLATE/create-entry.yml || ( \
+		test -d '$(TMP)' || mkdir '$(TMP)'; \
 		./bin/add-feed-to-issue-template .github/ISSUE_TEMPLATE/create-entry.yml '$(FEED_TITLE_CLEAN)' >'$(TMP)/create-entry.yml'; \
 		mv '$(TMP)/create-entry.yml' '.github/ISSUE_TEMPLATE/create-entry.yml'; \
 		test "$(GIT_COMMIT)" != 1 || \
