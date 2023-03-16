@@ -148,7 +148,7 @@ jobs:
       uses: peter-evans/create-pull-request@v4
       with:
         add-paths: |
-          .github/workflows/*.yml
+          .github/
           src/content
         branch-suffix: timestamp
         commit-message: |
