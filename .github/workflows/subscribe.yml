@@ -203,3 +203,8 @@ jobs:
           ${{ needs.setup.outputs.description }}
         labels: |
           create-episode
+    - name: Cleanup uploads
+      env:
+        EPISODE_ATTACHMENT: '${{ needs.setup.outputs.attachment }}'
+        EPISODE_ARTWORK: '${{ needs.setup.outputs.artwork }}'
+      run: make git-cleanup-uploads

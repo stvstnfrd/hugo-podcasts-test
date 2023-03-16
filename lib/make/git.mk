@@ -93,3 +93,22 @@ define git-pluck-file
 	$(GIT) checkout '$(1)/$(2)' -- '$(3)'
 	$(GIT) mv '$(3)' '$(4)'
 endef
+
+.PHONY: git-cleanup-uploads
+git-cleanup-uploads:  ### Cleanup the uploads branch
+	$(GIT) fetch --prune '$(GIT_REMOTE_UPLOAD)'
+	$(GIT) stash
+	$(GIT) checkout -B '$(GIT_BRANCH_UPLOAD)' '$(GIT_REMOTE_UPLOAD)/$(GIT_BRANCH_UPLOAD)'
+	$(GIT) rebase '$(GIT_REMOTE_STATIC)/$(GIT_BRANCH_STATIC)'
+ifdef $(EPISODE_ATTACHMENT)
+	$(GIT) rm '$(GIT_DIR_UPLOAD)/$(EPISODE_ATTACHMENT)'
+	$(GIT) commit -m 'chore: remove used attachment'
+endif
+ifdef $(EPISODE_ARTWORK)
+	$(GIT) rm '$(GIT_DIR_UPLOAD)/$(EPISODE_ARTWORK)'
+	$(GIT) commit -m 'chore: remove used artwork'
+endif
+	$(GIT) reset --soft "$$($(GIT) merge-base '$(GIT_REMOTE_STATIC)/$(GIT_BRANCH_STATIC)' HEAD)"
+	$(GIT) commit -m 'chore: squash uploads'
+	$(GIT) checkout '$(GIT_BRANCH_CURRENT)'
+	$(GIT) stash pop
