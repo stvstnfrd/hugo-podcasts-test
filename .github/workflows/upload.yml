@@ -19,7 +19,6 @@ jobs:
       id: branch
       shell: bash
       run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >>"${GITHUB_OUTPUT}"
-    - name: Add uploads to list
     - name: Commit Changes
       env:
         BRANCH_UPLOADS: uploads
