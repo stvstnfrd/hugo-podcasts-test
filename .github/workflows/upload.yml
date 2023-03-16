@@ -20,7 +20,6 @@ jobs:
       shell: bash
       run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >>"${GITHUB_OUTPUT}"
     - name: Add uploads to list
-      run: ./bin/add-uploads-to-issue-template
     - name: Commit Changes
       env:
         BRANCH_UPLOADS: uploads
@@ -31,6 +30,7 @@ jobs:
         git config --global user.email "${GITHUB_REPOSITORY%/*}@users.noreply.github.com"
         git fetch "${REMOTE}"
         git checkout -b local "${REMOTE}/${BRANCH_DEFAULT}"
+        ./bin/add-uploads-to-issue-template
         git add .github
         git commit -m 'chore: update upload list for issue templates'
         git push "${REMOTE}" 'local:${{ steps.branch.outputs.branch }}'
