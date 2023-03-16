@@ -129,7 +129,7 @@ jobs:
           ```
         labels: |
           feeds
-  create:
+  create-feed:
     if: needs.setup.outputs.action == 'create-feed'
     needs: setup
     runs-on: ubuntu-latest
@@ -142,8 +142,6 @@ jobs:
         GET_KEY_FROM_ISSUE: ./bin/get-key-from-issue
       run: |
         printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
-        title="$(${GET_KEY_FROM_ISSUE} Title "${FEED_ISSUE}")"
-        echo "title=${title}" >>"${GITHUB_OUTPUT}"
         delimiter="$(openssl rand -hex 8)"
         echo "description<<${delimiter}" >>"${GITHUB_OUTPUT}"
         ${GET_KEY_FROM_ISSUE} Description "${FEED_ISSUE}" >>"${GITHUB_OUTPUT}"
@@ -155,17 +153,17 @@ jobs:
       uses: peter-evans/create-pull-request@v4
       with:
         add-paths: |
-          .github
+          .github/workflows/*.yml
           src/content
         branch-suffix: timestamp
         commit-message: |
-          feat: create new feed; ${{ steps.feed.outputs.title }}
+          feat: create new feed; ${{ needs.setup.outputs.title }}
 
           Fix #${{ github.event.issue.number }}
         delete-branch: true
-        title: 'feat: create new feed; ${{ steps.feed.outputs.title }}'
+        title: 'feat: create new feed; ${{ needs.setup.outputs.title }}'
         body: |
-          # ${{ steps.feed.outputs.title }}
+          # ${{ needs.setup.outputs.title }}
 
           ${{ steps.feed.outputs.description }}
 
