@@ -11,7 +11,7 @@ looking == 1 && /^body/ {
     looking += 1
 }
 
-looking == 2 && /^ *id: *feed_title_clean$/ {
+looking == 2 && /^ *id: *feed_title *$/ {
     looking += 1
 }
 
