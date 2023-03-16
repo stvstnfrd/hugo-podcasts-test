@@ -32,4 +32,4 @@ jobs:
         ./bin/add-uploads-to-issue-template
         git add .github
         git commit -m 'chore: update upload list for issue templates'
-        git push "${REMOTE}" 'local:${{ steps.branch.outputs.branch }}'
+        git push "${REMOTE}" "local:${BRANCH_DEFAULT}"
