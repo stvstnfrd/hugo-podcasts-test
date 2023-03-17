@@ -178,11 +178,10 @@ jobs:
     - id: episode
       name: Create new podcast index
       env:
-        EPISODE_TITLE: '${{ needs.setup.outputs.title }}'
-        FEED_TITLE: '${{ needs.setup.outputs.feed_title }}'
-        EPISODE_ATTACHMENT: '${{ needs.setup.outputs.attachment }}'
-        EPISODE_ARTWORK: '${{ needs.setup.outputs.artwork }}'
-      run: make episode
+        FEED_ISSUE: issue.txt
+      run: |
+        printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
+        make episode
     - name: Validate the changes
       run: make build
     - name: Create Pull Request
