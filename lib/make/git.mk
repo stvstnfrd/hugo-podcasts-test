@@ -128,11 +128,11 @@ git-cleanup-uploads:  ### Cleanup the uploads branch
 	$(GIT) fetch --prune '$(GIT_REMOTE_UPLOAD)'
 	$(call git-stash,) || true
 	$(GIT) checkout -B '$(GIT_BRANCH_UPLOAD)' '$(GIT_REMOTE_UPLOAD)/$(GIT_BRANCH_UPLOAD)'
-ifdef $(EPISODE_ATTACHMENT)
+ifdef EPISODE_ATTACHMENT
 	$(GIT) rm '$(GIT_DIR_UPLOAD)/$(EPISODE_ATTACHMENT)'
 	$(call git-commit,-m 'chore: remove used attachment')
 endif
-ifdef $(EPISODE_ARTWORK)
+ifdef EPISODE_ARTWORK
 	$(GIT) rm '$(GIT_DIR_UPLOAD)/$(EPISODE_ARTWORK)'
 	$(call git-commit,-m 'chore: remove used artwork')
 endif
