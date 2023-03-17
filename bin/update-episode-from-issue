@@ -6,8 +6,8 @@ import sys
 
 def get_parser():
     parser = argparse.ArgumentParser(
-        prog = os.path.basename(__file__),
-        description = 'Update an episode, based on a Github Issues post',
+        prog=os.path.basename(__file__),
+        description='Update an episode, based on a Github Issues post',
     )
     parser.add_argument(
         'feed_file',
