@@ -446,54 +446,59 @@ class Feed(frontmatter.Post):
         """
         Sanitize the data to map from Issue -> Feed
         """
-        feed = {}
         data = {
             key: value
             for key, value in data.items()
             if value != '_No response_' and key not in [
             ]
         }
-        categories = list(data['category'].split(', ') + data['categories'].split(', '))
-        del data['category']
-        del data['categories']
-        del data['action']
+        categories = data['category'].split(', ')
+        categories += data.get('categories', '').split(', ')
+        categories = [
+            category
+            for category in categories
+            if category
+        ]
         data['categories'] = categories
-        data['explicit'] = data['explicit'].lower() not in ['clean', 'no', 'false']
-
-        if 'episode number' in data:
-            try:
-                feed['episode'] = int(data['episode number'])
-            except ValueError:
-                pass
-            del data['episode number']
-        if 'season number' in data:
-            try:
-                feed['season'] = int(data['season number'])
-            except ValueError:
-                pass
-            del data['season number']
-        if 'description' in data:
-            data['content'] = data['description']
-            del data['description']
-        if 'summary' in data:
-            data['description'] = data['summary']
-            del data['summary']
+        data['feed'] = {}
+        _list = lambda x: list([x,])
+        audio = lambda x: [ 'HEARME.mp3', ]
+        images = lambda x: [ 'cover.jpg', ]
+        _bool = lambda x: 'yes' if x != 'true' else ''
+        _bool = lambda x: (x or '').lower() not in ['clean', 'no', 'false']
+        MAP_KEYS = (
+            ('description', 'content', str, data),
+            ('summary', 'description', str, data),
+            ('season number', 'season', int, data['feed']),
+            ('episode number', 'episode', int, data['feed']),
+            ('episode title', 'title', str, data),
+            ('explicit', 'explicit', _bool, data['feed']),
+            ('type', 'type', str, data['feed']),
+            ('artwork', 'images', images, data),
+            ('attachment', 'audio', audio, data),
+        )
+        for key, subkey, handler, holder in MAP_KEYS:
+            if key in data:
+                holder[subkey] = data[key]
+                try:
+                    holder[subkey] = handler(holder[subkey])
+                except:
+                    pass
+                del data[key]
         if 'feed title' in data:
-            data['series'] = [ data['feed title'] ]
-            del data['feed title']
-        if 'attachment' in data:
-            data['audio'] = [ 'HEARME.mp3' ]
-            del data['attachment']
-        if 'artwork' in data:
-            data['images'] = [ 'cover.jpg' ]
-            del data['artwork']
-        for key, value in data.items():
-            if key in ['explicit', 'type']:
-                feed[key] = value
-        for key in feed:
+            action = data.get('action')
+            if action == 'create-feed':
+                data['title'] = data['feed title']
+            elif action == 'create-episode':
+                data['series'] = [ data['feed title'] ]
+        REMOVE_KEYS = (
+            'action',
+            'category',
+            'feed title',
+        )
+        for key in REMOVE_KEYS:
             if key in data:
                 del data[key]
-        data['feed'] = feed
         return data
 
 
