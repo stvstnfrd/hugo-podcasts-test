@@ -54,7 +54,9 @@ jobs:
         attachment=''
         artwork=''
         if [ "${GITHUB_EVENT_NAME}" = 'issues' ]; then
-          printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
+          cat >"${FEED_ISSUE}" <<DeLiMiTeR
+          ${{ github.event.issue.body }}
+          DeLiMiTeR
           action="$(${GET_KEY_FROM_ISSUE} Action "${FEED_ISSUE}")"
           delimiter="$(openssl rand -hex 8)"
           echo "description<<${delimiter}" >>"${GITHUB_OUTPUT}"
