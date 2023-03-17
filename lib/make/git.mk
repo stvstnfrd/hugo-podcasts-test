@@ -74,9 +74,9 @@ endef
 
 define git-checkout-branch
 	if [ "$(GIT_BRANCH)" = 1 ]; then \
-		$(GIT) branch | grep " $(1)$$" --silent \
-		|| $(GIT) branch "$(1)" "main"; \
-		$(GIT) checkout "$(1)"; \
+		$(GIT) branch | grep ' $(1)$$' --silent \
+		|| $(GIT) branch '$(1)' '$(GIT_BRANCH_CONTENT)'; \
+		$(GIT) checkout '$(1)'; \
 	fi
 endef
 
@@ -112,8 +112,8 @@ git-branch-on-remote-uploads: .git/refs/remotes/$(GIT_REMOTE_UPLOAD)/$(GIT_BRANC
 
 define git-fetch
 	if [ "$(GIT_FETCH)" = 1 ]; then \
-		"$(GIT)" fetch origin; \
-		"$(GIT)" rebase "origin/$(1)"; \
+		"$(GIT)" fetch '$(GIT_REMOTE_CONTENT)'; \
+		"$(GIT)" rebase "'$(GIT_REMOTE_CONTENT)'/$(1)"; \
 	fi
 endef
 
