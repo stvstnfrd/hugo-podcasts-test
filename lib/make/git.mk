@@ -136,7 +136,7 @@ ifdef $(EPISODE_ARTWORK)
 	$(GIT) rm '$(GIT_DIR_UPLOAD)/$(EPISODE_ARTWORK)'
 	$(call git-commit,-m 'chore: remove used artwork')
 endif
-	$(GIT) reset --soft "$$($(GIT) merge-base '$(GIT_REMOTE_STATIC)/$(GIT_BRANCH_STATIC)' HEAD)"
+	$(GIT) reset --soft '$(GIT_REMOTE_STATIC)/$(GIT_BRANCH_STATIC)'
 	$(GIT) add '$(GIT_DIR_UPLOAD)'
 	$(call git-commit,-m 'chore: squash uploads')
 	$(GIT) checkout '$(GIT_BRANCH_CURRENT)'
