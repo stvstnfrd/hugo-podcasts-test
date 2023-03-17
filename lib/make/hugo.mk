@@ -34,8 +34,10 @@ theme: requirements-system  ## Check for and download new versions of the Hugo T
 	$(call git-commit-path,src/go.mod src/go.sum,chore: bump theme versions)
 
 ifdef FEED_ISSUE
-FEED_TITLE=$(shell ./bin/get-key-from-issue title '$(FEED_ISSUE)' | sed "s/'/\\'/g")
-FEED_TITLE_CLEAN=$(shell ./bin/get-key-from-issue title '$(FEED_ISSUE)' | sed "s/'/\\'/g" | sed 's/^\s\+//; s/\s\+$$//; s/ \+/-/g; s/[^-_a-zA-Z0-9]//g' | tr '[:upper:]' '[:lower:]')
+FEED_TITLE=$(shell ./bin/get-key-from-issue 'Feed Title' '$(FEED_ISSUE)' | sed "s/'/\\'/g")
+FEED_TITLE_CLEAN=$(shell ./bin/get-key-from-issue 'Feed Title' '$(FEED_ISSUE)' | sed "s/'/\\'/g" | sed 's/^\s\+//; s/\s\+$$//; s/ \+/-/g; s/[^-_a-zA-Z0-9]//g' | tr '[:upper:]' '[:lower:]')
+EPISODE_ATTACHMENT ?= $(shell ./bin/get-key-from-issue attachment '$(FEED_ISSUE)' | sed "s/'/\\'/g")
+EPISODE_ARTWORK ?= $(shell ./bin/get-key-from-issue artwork '$(FEED_ISSUE)' | sed "s/'/\\'/g")
 endif
 ifdef FEED_TITLE
 FEED_TITLE_CLEAN=$(shell echo '$(FEED_TITLE)' | sed "s/'/\\'/g" | sed 's/^\s\+//; s/\s\+$$//; s/ \+/-/g; s/[^-_a-zA-Z0-9]//g' | tr '[:upper:]' '[:lower:]')
@@ -64,9 +66,10 @@ else
 	test -e '$(FEED_INDEX)' \
 	|| (cd '$(HUGO_SITE_NAME)' && \
 		hugo new "$(FEED_INDEX_NAME)")
-ifdef FEED_ISSUE
-	$(PYTHON) ./bin/update-feed-from-issue \
-		"$(FEED_INDEX)" "$(FEED_ISSUE)"
+ifneq (,$(FEED_ISSUE))
+ifneq (,$(FEED_INDEX))
+	$(PYTHON) ./bin/update-from-issue "$(FEED_INDEX)" "$(FEED_ISSUE)"
+endif
 endif
 	grep --quiet '^      - $(FEED_TITLE_CLEAN)$$' .github/ISSUE_TEMPLATE/create-entry.yml || ( \
 		test -d '$(TMP)' || mkdir '$(TMP)'; \
@@ -90,13 +93,12 @@ else
 	|| (cd '$(HUGO_SITE_NAME)' && \
 		hugo new --kind episodes "$(EPISODE_INDEX_NAME)")
 ifdef FEED_ISSUE
-	$(PYTHON) ./bin/update-episode-from-issue \
-		"$(EPISODE_INDEX)" "$(FEED_ISSUE)"
+	$(PYTHON) ./bin/update-from-issue "$(EPISODE_INDEX)" "$(FEED_ISSUE)"
 endif
-ifdef EPISODE_ATTACHMENT
+ifneq (,$(EPISODE_ATTACHMENT))
 	$(call git-pluck-file,$(GIT_REMOTE_UPLOAD),$(GIT_BRANCH_UPLOAD),$(GIT_DIR_UPLOAD)/$(EPISODE_ATTACHMENT),$(dir $(EPISODE_INDEX))/HEARME.mp3)
 endif
-ifdef EPISODE_ARTWORK
+ifneq (,$(EPISODE_ARTWORK))
 	$(call git-pluck-file,$(GIT_REMOTE_UPLOAD),$(GIT_BRANCH_UPLOAD),$(GIT_DIR_UPLOAD)/$(EPISODE_ARTWORK),$(dir $(EPISODE_INDEX))/cover$(suffix $(EPISODE_ARTWORK)))
 endif
 endif

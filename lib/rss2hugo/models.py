@@ -405,11 +405,17 @@ class Feed(frontmatter.Post):
         data = Issue.from_file(issue_file)
         data = data.to_dict()
         data = cls._clean_data(data)
-        del data['content']
-        contents = data['description']
-        del data['description']
-        issue = cls(contents, **data)
+        issue = cls(**data)
         return issue
+
+    @classmethod
+    def update_from_issue(cls, issue_file, index_file):
+        """
+        Update a post based on the contents of a github issue
+        """
+        feed = cls.from_post(index_file)
+        merged = feed.merge(issue_file)
+        merged.save(index_file)
 
     @classmethod
     def _merge(cls, source, destination):
@@ -449,19 +455,68 @@ class Feed(frontmatter.Post):
         """
         Sanitize the data to map from Issue -> Feed
         """
-        tags = list(data['category'].split(', ') + data['categories'].split(', '))
-        del data['category']
-        del data['categories']
-        del data['action']
-        data['tags'] = tags
-        data['explicit'] = data['explicit'].lower() not in ['clean', 'no', 'false']
-        feed = {}
-        for key in data:
-            if key in ['explicit', 'type']:
-                feed[key] = data[key]
-        for key in feed:
-            del data[key]
-        data['feed'] = feed
+        data = {
+            key: value
+            for key, value in data.items()
+            if value != '_No response_' and key not in [
+            ]
+        }
+        categories = data['category'].split(', ')
+        categories += data.get('categories', '').split(', ')
+        categories = [
+            category
+            for category in categories
+            if category
+        ]
+        data['categories'] = categories
+        data['feed'] = {}
+
+        def _list(item):
+            return list([item,])
+        def audio(_item):
+            return [ 'HEARME.mp3', ]
+        def images(_item):
+            return [ 'cover.jpg', ]
+        def _bool(item):
+            return 'yes' if item != 'true' else ''
+        def _bool(item):
+            return (item or '').lower() not in ['clean', 'no', 'false']
+
+        map_keys = (
+            ('description', 'content', str, data),
+            ('summary', 'description', str, data),
+            ('season number', 'season', int, data['feed']),
+            ('episode number', 'episode', int, data['feed']),
+            ('episode title', 'title', str, data),
+            ('explicit', 'explicit', _bool, data['feed']),
+            ('type', 'type', str, data['feed']),
+            ('artwork', 'images', images, data),
+            ('attachment', 'audio', audio, data),
+        )
+        for key, subkey, handler, holder in map_keys:
+            if key in data:
+                holder[subkey] = data[key]
+                # pylint: disable=broad-exception-caught
+                try:
+                    holder[subkey] = handler(holder[subkey])
+                except Exception:
+                    pass
+                # pylint: enable=broad-exception-caught
+                del data[key]
+        if 'feed title' in data:
+            action = data.get('action')
+            if action == 'create-feed':
+                data['title'] = data['feed title']
+            elif action == 'create-episode':
+                data['series'] = [ data['feed title'] ]
+        remove_keys = (
+            'action',
+            'category',
+            'feed title',
+        )
+        for key in remove_keys:
+            if key in data:
+                del data[key]
         return data
 
 

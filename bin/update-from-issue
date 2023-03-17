@@ -7,10 +7,11 @@ import sys
 def get_parser():
     parser = argparse.ArgumentParser(
         prog = os.path.basename(__file__),
-        description = 'Update an episode, based on a Github Issues post',
+        description = 'Update a feed, based on a Github Issues post',
+        # epilog = 'Note: If skip-images is set, overwrite-images will be ignored.',
     )
     parser.add_argument(
-        'feed_file',
+        'index_file',
         action='store',
         help='Which Markdown post are we updating?',
     )
@@ -37,10 +38,8 @@ if __name__ == '__main__':
         print('Unable to locate the rss2hugo package; try reinstalling...')
         sys.exit(1)
     try:
-        feed_file = args['feed_file']
+        index_file = args['index_file']
         issue_file = args['issue_file']
-        # feed = Feed.from_post(feed_file)
-        # merged = feed.merge(issue_file)
-        # merged.save(feed_file)
+        Feed.update_from_issue(index_file, issue_file)
     except KeyboardInterrupt:
         pass

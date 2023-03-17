@@ -10,7 +10,7 @@ on:
         description: 'The URL of the RSS feed'
         required: true
         type: string
-      title:
+      feed_title:
         description: 'The title of the RSS feed'
         default: ''
         required: false
@@ -30,14 +30,14 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       url: ${{ steps.params.outputs.url }}
-      title: ${{ steps.params.outputs.title }}
+      feed_title: ${{ steps.params.outputs.feed_title }}
+      episode_title: ${{ steps.params.outputs.episode_title }}
       website: ${{ steps.params.outputs.website }}
       file: ${{ steps.params.outputs.file }}
       action: ${{ steps.params.outputs.action }}
       description: ${{ steps.params.outputs.description }}
       attachment: ${{ steps.params.outputs.attachment }}
       artwork: ${{ steps.params.outputs.artwork }}
-      feed_title: ${{ steps.params.outputs.feed_title }}
     steps:
     - uses: actions/checkout@v3
     - name: Set parameters
@@ -50,17 +50,20 @@ jobs:
         action=''
         description=''
         feed_title=''
+        episode_title=''
         attachment=''
         artwork=''
         if [ "${GITHUB_EVENT_NAME}" = 'issues' ]; then
-          printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
+          cat >"${FEED_ISSUE}" <<DeLiMiTeR
+        ${{ github.event.issue.body }}
+        DeLiMiTeR
           action="$(${GET_KEY_FROM_ISSUE} Action "${FEED_ISSUE}")"
           delimiter="$(openssl rand -hex 8)"
           echo "description<<${delimiter}" >>"${GITHUB_OUTPUT}"
           ${GET_KEY_FROM_ISSUE} Description "${FEED_ISSUE}" >>"${GITHUB_OUTPUT}"
           echo "${delimiter}" >>"${GITHUB_OUTPUT}"
           url="$(${GET_KEY_FROM_ISSUE} URL "${FEED_ISSUE}")"
-          title="$(${GET_KEY_FROM_ISSUE} Title "${FEED_ISSUE}")"
+          episode_title="$(${GET_KEY_FROM_ISSUE} 'Episode Title' "${FEED_ISSUE}")"
           website="$(${GET_KEY_FROM_ISSUE} Website "${FEED_ISSUE}")"
           feed_title="$(${GET_KEY_FROM_ISSUE} 'Feed Title' "${FEED_ISSUE}")"
           attachment="$(${GET_KEY_FROM_ISSUE} Attachment "${FEED_ISSUE}")"
@@ -68,7 +71,7 @@ jobs:
           file='etc/feed.opml'
         elif  [ "${GITHUB_EVENT_NAME}" = 'workflow_dispatch' ]; then
           url="${{ inputs.url }}"
-          title="${{ inputs.title }}"
+          feed_title="${{ inputs.feed_title }}"
           website="${{ inputs.website }}"
           file="${{ inputs.file }}"
           action=import-feed
@@ -76,7 +79,7 @@ jobs:
           echo 'Unsupported workflow type' >/dev/stderror
         fi
         echo "url=${url}" >>"${GITHUB_OUTPUT}"
-        echo "title=${title}" >>"${GITHUB_OUTPUT}"
+        echo "episode_title=${episode_title}" >>"${GITHUB_OUTPUT}"
         echo "website=${website}" >>"${GITHUB_OUTPUT}"
         echo "file=${file}" >>"${GITHUB_OUTPUT}"
         echo "action=${action}" >>"${GITHUB_OUTPUT}"
@@ -92,7 +95,7 @@ jobs:
     - name: Add entry to OPML file
       env:
         OPML_URL: ${{ needs.setup.outputs.url }}
-        OPML_TITLE: ${{ needs.setup.outputs.title }}
+        OPML_TITLE: ${{ needs.setup.outputs.feed_title }}
         OPML_WEBSITE: ${{ needs.setup.outputs.website }}
         OPML_FILE: ${{ needs.setup.outputs.file }}
       run: make subscribe
@@ -101,9 +104,9 @@ jobs:
     - name: Preview the feed
       id: feed
       run: |
-        title="${{ needs.setup.outputs.title }}"
-        title="${title:-${{ needs.setup.outputs.url }}}"
-        echo "title=${title}" >>"${GITHUB_OUTPUT}"
+        feed_title='${{ needs.setup.outputs.feed_title }}'
+        feed_title="${feed_title:-${{ needs.setup.outputs.url }}}"
+        echo "feed_title=${feed_title}" >>"${GITHUB_OUTPUT}"
         delimiter="$(openssl rand -hex 8)"
         echo "description<<${delimiter}" >>"${GITHUB_OUTPUT}"
         curl '${{ needs.setup.outputs.url }}' >input.xml
@@ -116,13 +119,13 @@ jobs:
           ${{ needs.setup.outputs.file }}
         branch-suffix: timestamp
         commit-message: |
-          feat: subscribe to new feed; ${{ steps.feed.outputs.title }}
+          feat: subscribe to new feed; ${{ steps.feed.outputs.feed_title }}
 
           Fix #${{ github.event.issue.number }}
         delete-branch: true
-        title: 'feat: subscribe to new feed; ${{ steps.feed.outputs.title }}'
+        title: 'feat: subscribe to new feed; ${{ steps.feed.outputs.feed_title }}'
         body: |
-          # ${{ steps.feed.outputs.title }}
+          # ${{ steps.feed.outputs.feed_title }}
 
           - [Feed](${{ needs.setup.outputs.url }})
           - [Website](${{ needs.setup.outputs.website }})
@@ -144,7 +147,9 @@ jobs:
       env:
         FEED_ISSUE: issue.txt
       run: |
-        printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
+        cat >"${FEED_ISSUE}" <<DeLiMiTeR
+        ${{ github.event.issue.body }}
+        DeLiMiTeR
         make feed
     - name: Validate the changes
       run: make build
@@ -156,13 +161,13 @@ jobs:
           src/content
         branch-suffix: timestamp
         commit-message: |
-          feat: create new feed; ${{ needs.setup.outputs.title }}
+          feat: create new feed; ${{ needs.setup.outputs.feed_title }}
 
           Fix #${{ github.event.issue.number }}
         delete-branch: true
-        title: 'feat: create new feed; ${{ needs.setup.outputs.title }}'
+        title: 'feat: create new feed; ${{ needs.setup.outputs.feed_title }}'
         body: |
-          # ${{ needs.setup.outputs.title }}
+          # ${{ needs.setup.outputs.feed_title }}
 
           ${{ needs.setup.outputs.description }}
 
@@ -178,11 +183,12 @@ jobs:
     - id: episode
       name: Create new podcast index
       env:
-        EPISODE_TITLE: '${{ needs.setup.outputs.title }}'
-        FEED_TITLE: '${{ needs.setup.outputs.feed_title }}'
-        EPISODE_ATTACHMENT: '${{ needs.setup.outputs.attachment }}'
-        EPISODE_ARTWORK: '${{ needs.setup.outputs.artwork }}'
-      run: make episode
+        FEED_ISSUE: issue.txt
+      run: |
+        cat >"${FEED_ISSUE}" <<DeLiMiTeR
+        ${{ github.event.issue.body }}
+        DeLiMiTeR
+        make episode
     - name: Validate the changes
       run: make build
     - name: Create Pull Request
@@ -192,13 +198,13 @@ jobs:
           src/content
         branch-suffix: timestamp
         commit-message: |
-          feat: create new episode; ${{ needs.setup.outputs.title }}
+          feat: create new episode; ${{ needs.setup.outputs.episode_title }}
 
           Fix #${{ github.event.issue.number }}
         delete-branch: true
-        title: 'feat: create new episode; ${{ needs.setup.outputs.title }}'
+        title: 'feat: create new episode; ${{ needs.setup.outputs.episode_title }}'
         body: |
-          # ${{ needs.setup.outputs.title }}
+          # ${{ needs.setup.outputs.episode_title }}
 
           ${{ needs.setup.outputs.description }}
         labels: |
