@@ -40,8 +40,6 @@ if __name__ == '__main__':
     try:
         feed_file = args['feed_file']
         issue_file = args['issue_file']
-        feed = Feed.from_post(feed_file)
-        merged = feed.merge(issue_file)
-        merged.save(feed_file)
+        Feed.update_from_issue(feed_file, issue_file)
     except KeyboardInterrupt:
         pass

@@ -10,15 +10,20 @@ class Issue(frontmatter.Post):
     """
 
     @classmethod
+    def _open(cls, filename):
+        with open(filename, encoding='utf-8') as _file:
+            contents = _file.readlines()
+        return contents
+
+    @classmethod
     def from_file(cls, filename):
         """
         Create a new Issue based on file contents
         """
-        with open(filename, encoding='utf-8') as _file:
-            contents = _file.readlines()
         inside = None
         data = {}
         text = []
+        contents = cls._open(filename)
         for line in contents:
             text.append(line)
             if line.startswith('### '):

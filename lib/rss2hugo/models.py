@@ -409,6 +409,15 @@ class Feed(frontmatter.Post):
         return issue
 
     @classmethod
+    def update_from_issue(cls, issue_file, index_file):
+        """
+        Update a post based on the contents of a github issue
+        """
+        feed = cls.from_post(index_file)
+        merged = feed.merge(issue_file)
+        merged.save(index_file)
+
+    @classmethod
     def _merge(cls, source, destination):
         """
         Merge two dictionaries, deeply
