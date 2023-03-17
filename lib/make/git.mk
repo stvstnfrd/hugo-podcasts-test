@@ -1,6 +1,8 @@
 include lib/options.mk
 
 GIT=git
+GIT_USER_NAME = $(shell git config user.name | sed "s/^'\|'$$//g")
+GITHUB_USER_NAME ?= $(subst /,,$(dir $(GITHUB_REPOSITORY)))
 GIT_REMOTE_CONTENT ?= origin
 GIT_BRANCH_CONTENT ?= $(if $(shell git rev-parse $(GIT_REMOTE_CONTENT)/master >/dev/null 2>&1 && echo 1),master,main)
 ifndef GIT_BRANCH_STATIC
@@ -29,6 +31,28 @@ ifndef GIT_BRANCH
 GIT_BRANCH=
 endif
 
+define git-config-set-user
+if [ -z '$(GIT_USER_NAME)' ] && [ -n '$(GITHUB_USER_NAME)' ]; then \
+    $(GIT) config user.name '$(GITHUB_USER_NAME)'; \
+    $(GIT) config user.email '$(GITHUB_USER_NAME)@users.noreply.github.com'; \
+fi
+endef
+
+define git-rebase
+$(call git-config-set-user); \
+$(GIT) rebase '$(1)'
+endef
+
+define git-commit
+$(call git-config-set-user); \
+$(GIT) commit $(1)
+endef
+
+define git-stash
+$(call git-config-set-user); \
+$(GIT) stash $(1)
+endef
+
 define assert-not-has-changes-saved
 @$(GIT) diff --cached --exit-code --quiet . \
 || { \
@@ -56,20 +80,25 @@ define git-checkout-branch
 	fi
 endef
 
+ifeq (1,$(GIT_COMMIT))
 define git-commit-path
-	if [ "$(GIT_COMMIT)" = 1 ]; then \
-		"$(GIT)" status --untracked-files=all --porcelain $(1) \
-		| grep '.' --silent \
-		&& { \
-			$(GIT) add $(1) \
-			&& $(GIT) commit -m '$(2)' \
-		; } \
-		|| true; \
-		if [ "$(GIT_PUSH)" = 1 ]; then \
-			$(GIT) push origin "$(GIT_BRANCH_CONTENT)"; \
-		fi \
+	$(GIT) status --untracked-files=all --porcelain $(1) \
+	| grep '.' --silent \
+	&& { \
+		$(GIT) add $(1) \
+		&& $(call git-config-set-user) \
+		&& $(GIT) commit -m '$(2)' \
+	; } \
+	|| true; \
+	if [ "$(GIT_PUSH)" = 1 ]; then \
+		$(GIT) push '$(GIT_REMOTE_CONTENT)' '$(GIT_BRANCH_CONTENT)'; \
 	fi
 endef
+else
+define git-commit-path
+echo >/dev/null
+endef
+endif
 
 .PHONY: git-branch-on-remote-uploads
 git-branch-on-remote-uploads: .git/refs/remotes/$(GIT_REMOTE_UPLOAD)/$(GIT_BRANCH_UPLOAD)
@@ -97,18 +126,18 @@ endef
 .PHONY: git-cleanup-uploads
 git-cleanup-uploads:  ### Cleanup the uploads branch
 	$(GIT) fetch --prune '$(GIT_REMOTE_UPLOAD)'
-	$(GIT) stash
+	$(call git-stash,)
 	$(GIT) checkout -B '$(GIT_BRANCH_UPLOAD)' '$(GIT_REMOTE_UPLOAD)/$(GIT_BRANCH_UPLOAD)'
-	$(GIT) rebase '$(GIT_REMOTE_STATIC)/$(GIT_BRANCH_STATIC)'
+	$(call git-rebase,$(GIT_REMOTE_STATIC)/$(GIT_BRANCH_STATIC))
 ifdef $(EPISODE_ATTACHMENT)
 	$(GIT) rm '$(GIT_DIR_UPLOAD)/$(EPISODE_ATTACHMENT)'
-	$(GIT) commit -m 'chore: remove used attachment'
+	$(call git-commit,-m 'chore: remove used attachment')
 endif
 ifdef $(EPISODE_ARTWORK)
 	$(GIT) rm '$(GIT_DIR_UPLOAD)/$(EPISODE_ARTWORK)'
-	$(GIT) commit -m 'chore: remove used artwork'
+	$(call git-commit,-m 'chore: remove used artwork')
 endif
 	$(GIT) reset --soft "$$($(GIT) merge-base '$(GIT_REMOTE_STATIC)/$(GIT_BRANCH_STATIC)' HEAD)"
-	$(GIT) commit -m 'chore: squash uploads'
+	$(call git-commit,-m 'chore: squash uploads')
 	$(GIT) checkout '$(GIT_BRANCH_CURRENT)'
-	$(GIT) stash pop
+	$(call git-stash,pop)

@@ -207,8 +207,4 @@ jobs:
       env:
         EPISODE_ATTACHMENT: '${{ needs.setup.outputs.attachment }}'
         EPISODE_ARTWORK: '${{ needs.setup.outputs.artwork }}'
-      shell: bash
-      run: |
-        git config --global user.name "${GITHUB_REPOSITORY%/*}"
-        git config --global user.email "${GITHUB_REPOSITORY%/*}@users.noreply.github.com"
-        make git-cleanup-uploads
+      run: make git-cleanup-uploads
