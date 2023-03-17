@@ -137,9 +137,9 @@ ifdef EPISODE_ARTWORK
 	$(call git-commit,-m 'chore: remove used artwork')
 endif
 	$(GIT) reset --mixed '$(GIT_REMOTE_STATIC)/$(GIT_BRANCH_STATIC)'
-	$(GIT) add '$(GIT_DIR_UPLOAD)' \
-	&& $(call git-commit,-m 'chore: squash uploads') \
-	|| true
+	( $(GIT) add '$(GIT_DIR_UPLOAD)' \
+		&& $(call git-commit,-m 'chore: squash uploads') \
+	) || true
 	$(GIT) push --force '$(GIT_REMOTE_UPLOAD)' '$(GIT_BRANCH_UPLOAD)'
 	$(GIT) checkout '$(GIT_BRANCH_CURRENT)'
 	$(call git-stash,pop) || true
