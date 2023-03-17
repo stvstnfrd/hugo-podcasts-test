@@ -9,9 +9,9 @@ body:
       value: |
         # Request to create a new RSS feed
   - type: input
-    id: title
+    id: feed_title
     attributes:
-      label: Title
+      label: Feed Title
       description: What is the feed called?
       placeholder: My Feed
     validations:

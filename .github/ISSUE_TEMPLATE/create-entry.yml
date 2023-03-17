@@ -23,9 +23,9 @@ body:
       multiple: false
       options: []
   - type: input
-    id: title
+    id: episode_title
     attributes:
-      label: Title
+      label: Episode Title
       description: What is the episode called?
       placeholder: My Episode
     validations:

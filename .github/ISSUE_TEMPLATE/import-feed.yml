@@ -17,9 +17,9 @@ body:
     validations:
       required: true
   - type: input
-    id: title
+    id: feed_title
     attributes:
-      label: Title
+      label: Feed Title
       description: The feed's title
       placeholder: This is the podcast's name
     validations:

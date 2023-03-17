@@ -126,18 +126,20 @@ endef
 .PHONY: git-cleanup-uploads
 git-cleanup-uploads:  ### Cleanup the uploads branch
 	$(GIT) fetch --prune '$(GIT_REMOTE_UPLOAD)'
-	$(call git-stash,)
+	$(call git-stash,) || true
 	$(GIT) checkout -B '$(GIT_BRANCH_UPLOAD)' '$(GIT_REMOTE_UPLOAD)/$(GIT_BRANCH_UPLOAD)'
-	$(call git-rebase,$(GIT_REMOTE_STATIC)/$(GIT_BRANCH_STATIC))
-ifdef $(EPISODE_ATTACHMENT)
+ifdef EPISODE_ATTACHMENT
 	$(GIT) rm '$(GIT_DIR_UPLOAD)/$(EPISODE_ATTACHMENT)'
 	$(call git-commit,-m 'chore: remove used attachment')
 endif
-ifdef $(EPISODE_ARTWORK)
+ifdef EPISODE_ARTWORK
 	$(GIT) rm '$(GIT_DIR_UPLOAD)/$(EPISODE_ARTWORK)'
 	$(call git-commit,-m 'chore: remove used artwork')
 endif
-	$(GIT) reset --soft "$$($(GIT) merge-base '$(GIT_REMOTE_STATIC)/$(GIT_BRANCH_STATIC)' HEAD)"
-	$(call git-commit,-m 'chore: squash uploads')
+	$(GIT) reset --mixed '$(GIT_REMOTE_STATIC)/$(GIT_BRANCH_STATIC)'
+	( $(GIT) add '$(GIT_DIR_UPLOAD)' \
+		&& $(call git-commit,-m 'chore: squash uploads') \
+	) || true
+	$(GIT) push --force '$(GIT_REMOTE_UPLOAD)' '$(GIT_BRANCH_UPLOAD)'
 	$(GIT) checkout '$(GIT_BRANCH_CURRENT)'
-	$(call git-stash,pop)
+	$(call git-stash,pop) || true
