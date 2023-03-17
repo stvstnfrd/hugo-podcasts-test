@@ -36,7 +36,7 @@ theme: requirements-system  ## Check for and download new versions of the Hugo T
 ifdef FEED_ISSUE
 FEED_TITLE=$(shell ./bin/get-key-from-issue title '$(FEED_ISSUE)' | sed "s/'/\\'/g")
 FEED_TITLE_CLEAN=$(shell ./bin/get-key-from-issue title '$(FEED_ISSUE)' | sed "s/'/\\'/g" | sed 's/^\s\+//; s/\s\+$$//; s/ \+/-/g; s/[^-_a-zA-Z0-9]//g' | tr '[:upper:]' '[:lower:]')
-EPISODE_ATTACHMENT ?=  $(shell ./bin/get-key-from-issue attachment '$(FEED_ISSUE)' | sed "s/'/\\'/g")
+EPISODE_ATTACHMENT ?= $(shell ./bin/get-key-from-issue attachment '$(FEED_ISSUE)' | sed "s/'/\\'/g")
 EPISODE_ARTWORK ?= $(shell ./bin/get-key-from-issue artwork '$(FEED_ISSUE)' | sed "s/'/\\'/g")
 endif
 ifdef FEED_TITLE
