@@ -1,0 +1,12 @@
+name: Test Hugo builds
+on:
+  push:
+    branches-ignore:
+    - uploads
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Confirm the build script runs
+      run: make lint-hugo
