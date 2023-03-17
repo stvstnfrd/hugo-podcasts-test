@@ -10,7 +10,7 @@ class Issue(frontmatter.Post):
     """
 
     @classmethod
-    def _open(cls, filename):
+    def _open(cls, filename):  # pragma: no cover
         with open(filename, encoding='utf-8') as _file:
             contents = _file.readlines()
         return contents
