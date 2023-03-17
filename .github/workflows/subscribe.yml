@@ -180,7 +180,9 @@ jobs:
       env:
         FEED_ISSUE: issue.txt
       run: |
-        printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
+        cat >"${FEED_ISSUE}" <<EOF
+        ${{ github.event.issue.body }}
+        EOF
         make episode
     - name: Validate the changes
       run: make build
