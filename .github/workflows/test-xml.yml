@@ -1,0 +1,15 @@
+name: Test XML
+on:
+  push:
+    branches-ignore:
+    - uploads
+    paths:
+    - ./etc/feed.opml
+    - ./.github/workflows/test-xml.yml
+jobs:
+  lint-xml:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Validate the updated file
+      run: make lint-xml

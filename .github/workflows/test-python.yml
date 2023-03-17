@@ -1,44 +1,37 @@
-name: Test Suite
+name: Test Python code
 on:
   push:
     branches-ignore:
     - uploads
+    paths:
+    - ./lib/**
+    - ./.github/workflows/test-python.yml
 jobs:
-  lint-python:
+  lint:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10"]
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Analysing the code with pylint
+    - name: Lint python code
       run: make lint-python
-  lint-hugo:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Confirm the build script runs
-      run: make lint-hugo
-  test-python:
+  coverage:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10"]
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Run the python tests
+    - name: Run python tests
       run: make test-python
-  lint-xml:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Validate the updated file
-      run: make lint-xml
