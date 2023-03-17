@@ -66,9 +66,11 @@ else
 	test -e '$(FEED_INDEX)' \
 	|| (cd '$(HUGO_SITE_NAME)' && \
 		hugo new "$(FEED_INDEX_NAME)")
-ifdef FEED_ISSUE
+ifneq (,$(FEED_ISSUE))
+ifneq (,$(FEED_INDEX))
 	$(PYTHON) ./bin/update-feed-from-issue \
 		"$(FEED_INDEX)" "$(FEED_ISSUE)"
+endif
 endif
 	grep --quiet '^      - $(FEED_TITLE_CLEAN)$$' .github/ISSUE_TEMPLATE/create-entry.yml || ( \
 		test -d '$(TMP)' || mkdir '$(TMP)'; \
