@@ -128,7 +128,6 @@ git-cleanup-uploads:  ### Cleanup the uploads branch
 	$(GIT) fetch --prune '$(GIT_REMOTE_UPLOAD)'
 	$(call git-stash,)
 	$(GIT) checkout -B '$(GIT_BRANCH_UPLOAD)' '$(GIT_REMOTE_UPLOAD)/$(GIT_BRANCH_UPLOAD)'
-	$(call git-rebase,$(GIT_REMOTE_STATIC)/$(GIT_BRANCH_STATIC))
 ifdef $(EPISODE_ATTACHMENT)
 	$(GIT) rm '$(GIT_DIR_UPLOAD)/$(EPISODE_ATTACHMENT)'
 	$(call git-commit,-m 'chore: remove used attachment')
@@ -138,6 +137,7 @@ ifdef $(EPISODE_ARTWORK)
 	$(call git-commit,-m 'chore: remove used artwork')
 endif
 	$(GIT) reset --soft "$$($(GIT) merge-base '$(GIT_REMOTE_STATIC)/$(GIT_BRANCH_STATIC)' HEAD)"
+	$(GIT) add '$(GIT_DIR_UPLOAD)'
 	$(call git-commit,-m 'chore: squash uploads')
 	$(GIT) checkout '$(GIT_BRANCH_CURRENT)'
 	$(call git-stash,pop)
