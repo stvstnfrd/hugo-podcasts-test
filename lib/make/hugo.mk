@@ -68,8 +68,7 @@ else
 		hugo new "$(FEED_INDEX_NAME)")
 ifneq (,$(FEED_ISSUE))
 ifneq (,$(FEED_INDEX))
-	$(PYTHON) ./bin/update-feed-from-issue \
-		"$(FEED_INDEX)" "$(FEED_ISSUE)"
+	$(PYTHON) ./bin/update-from-issue "$(FEED_INDEX)" "$(FEED_ISSUE)"
 endif
 endif
 	grep --quiet '^      - $(FEED_TITLE_CLEAN)$$' .github/ISSUE_TEMPLATE/create-entry.yml || ( \
@@ -94,8 +93,7 @@ else
 	|| (cd '$(HUGO_SITE_NAME)' && \
 		hugo new --kind episodes "$(EPISODE_INDEX_NAME)")
 ifdef FEED_ISSUE
-	$(PYTHON) ./bin/update-episode-from-issue \
-		"$(EPISODE_INDEX)" "$(FEED_ISSUE)"
+	$(PYTHON) ./bin/update-from-issue "$(EPISODE_INDEX)" "$(FEED_ISSUE)"
 endif
 ifneq (,$(EPISODE_ATTACHMENT))
 	$(call git-pluck-file,$(GIT_REMOTE_UPLOAD),$(GIT_BRANCH_UPLOAD),$(GIT_DIR_UPLOAD)/$(EPISODE_ATTACHMENT),$(dir $(EPISODE_INDEX))/HEARME.mp3)

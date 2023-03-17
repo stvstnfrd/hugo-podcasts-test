@@ -11,7 +11,7 @@ def get_parser():
         # epilog = 'Note: If skip-images is set, overwrite-images will be ignored.',
     )
     parser.add_argument(
-        'feed_file',
+        'index_file',
         action='store',
         help='Which Markdown post are we updating?',
     )
@@ -38,8 +38,8 @@ if __name__ == '__main__':
         print('Unable to locate the rss2hugo package; try reinstalling...')
         sys.exit(1)
     try:
-        feed_file = args['feed_file']
+        index_file = args['index_file']
         issue_file = args['issue_file']
-        Feed.update_from_issue(feed_file, issue_file)
+        Feed.update_from_issue(index_file, issue_file)
     except KeyboardInterrupt:
         pass
