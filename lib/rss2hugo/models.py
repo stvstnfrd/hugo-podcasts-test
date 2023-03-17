@@ -405,10 +405,7 @@ class Feed(frontmatter.Post):
         data = Issue.from_file(issue_file)
         data = data.to_dict()
         data = cls._clean_data(data)
-        del data['content']
-        contents = data['description']
-        del data['description']
-        issue = cls(contents, **data)
+        issue = cls(**data)
         return issue
 
     @classmethod
@@ -449,18 +446,53 @@ class Feed(frontmatter.Post):
         """
         Sanitize the data to map from Issue -> Feed
         """
-        tags = list(data['category'].split(', ') + data['categories'].split(', '))
+        feed = {}
+        data = {
+            key: value
+            for key, value in data.items()
+            if value != '_No response_' and key not in [
+            ]
+        }
+        categories = list(data['category'].split(', ') + data['categories'].split(', '))
         del data['category']
         del data['categories']
         del data['action']
-        data['tags'] = tags
+        data['categories'] = categories
         data['explicit'] = data['explicit'].lower() not in ['clean', 'no', 'false']
-        feed = {}
-        for key in data:
+
+        if 'episode number' in data:
+            try:
+                feed['episode'] = int(data['episode number'])
+            except ValueError:
+                pass
+            del data['episode number']
+        if 'season number' in data:
+            try:
+                feed['season'] = int(data['season number'])
+            except ValueError:
+                pass
+            del data['season number']
+        if 'description' in data:
+            data['content'] = data['description']
+            del data['description']
+        if 'summary' in data:
+            data['description'] = data['summary']
+            del data['summary']
+        if 'feed title' in data:
+            data['series'] = [ data['feed title'] ]
+            del data['feed title']
+        if 'attachment' in data:
+            data['audio'] = [ 'HEARME.mp3' ]
+            del data['attachment']
+        if 'artwork' in data:
+            data['images'] = [ 'cover.jpg' ]
+            del data['artwork']
+        for key, value in data.items():
             if key in ['explicit', 'type']:
-                feed[key] = data[key]
+                feed[key] = value
         for key in feed:
-            del data[key]
+            if key in data:
+                del data[key]
         data['feed'] = feed
         return data
 
