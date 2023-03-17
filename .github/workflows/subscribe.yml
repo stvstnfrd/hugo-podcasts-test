@@ -147,7 +147,9 @@ jobs:
       env:
         FEED_ISSUE: issue.txt
       run: |
-        printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
+        cat >"${FEED_ISSUE}" <<DeLiMiTeR
+        ${{ github.event.issue.body }}
+        DeLiMiTeR
         make feed
     - name: Validate the changes
       run: make build
@@ -183,7 +185,9 @@ jobs:
       env:
         FEED_ISSUE: issue.txt
       run: |
-        printf '%s\n' '${{ github.event.issue.body }}' >"${FEED_ISSUE}"
+        cat >"${FEED_ISSUE}" <<DeLiMiTeR
+        ${{ github.event.issue.body }}
+        DeLiMiTeR
         make episode
     - name: Validate the changes
       run: make build
