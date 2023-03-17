@@ -1,0 +1,21 @@
+name: Ensure an uploads branch exists on the repository
+permissions:
+  contents: write
+  id-token: write
+on:
+  delete:
+    branches:
+    - uploads
+  push:
+    branches:
+    - main
+    - master
+  workflow_dispatch:
+jobs:
+  uploads:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Ensure we have a branch for uploads
+      run: make git-branch-on-remote-uploads

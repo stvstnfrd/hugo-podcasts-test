@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eau
+WORKFLOW='.github/ISSUE_TEMPLATE/create-entry.yml'
+git diff --name-status --diff-filter=A \
+    HEAD..origin/uploads -- dist/uploads \
+| sed 's/^A\s*//' \
+| sed 's/.*\///; s/\n//g' \
+| xargs \
+    awk -f bin/add-uploads-to-issue-template.awk \
+        "${WORKFLOW}" \
+>"${WORKFLOW}.bak"
+mv "${WORKFLOW}.bak" "${WORKFLOW}"

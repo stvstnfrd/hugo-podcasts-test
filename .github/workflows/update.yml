@@ -26,10 +26,7 @@ jobs:
     - name: Fetch content updates
       env:
         GIT_COMMIT: 1
-      run: |
-        git config --global user.name "${GITHUB_REPOSITORY%/*}"
-        git config --global user.email "${GITHUB_REPOSITORY%/*}@users.noreply.github.com"
-        make content
+      run: make content
     - name: Validate the updated file
       run: make build
     - name: Push changes
