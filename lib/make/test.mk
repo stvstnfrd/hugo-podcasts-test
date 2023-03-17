@@ -1,4 +1,5 @@
 COVERAGE=$(PYTHON_LIB) $(PYTHON_VENV_BIN)/coverage
+COVERAGE_XML=$(TMP)/coverage.xml
 PYLINT=$(PYTHON_LIB) $(PYTHON_VENV_BIN)/pylint
 PYLINT_FLAGS=--disable fixme
 XMLLINT=xmllint
@@ -22,6 +23,8 @@ _lint-python-requirements: requirements-python  ## Install requirements for Pyth
 .PHONY:
 test-python: _test-python-requirements  ### Check that the python test suite passes
 	$(COVERAGE) run -m unittest discover "$(PYTHON_LIB_PATH)"
+	test -d "$(TMP)" || mkdir -p "$(TMP)"
+	$(COVERAGE) xml -o '$(COVERAGE_XML)'
 	$(COVERAGE) report
 
 .PHONY: _test-python-requirements
