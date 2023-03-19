@@ -13,6 +13,7 @@ ifeq (,$(COVER_IMAGE))
 	$(call assert-not-has-changes-saved)
 	$(call assert-not-has-changes-to-file,src/content/cover.jpg src/content/cover.jpg)
 	test -d '$(TMP)' || mkdir '$(TMP)'
+	test -d 'src/content' || mkdir 'src/content'
 	curl -L '$(GITHUB_USER_IMAGE).jpg' -o '$(TMP_USER_IMAGE).jpg'
 	if [ '100' -gt "$$(du --bytes '$(TMP_USER_IMAGE).jpg' | awk '{print $$1}')" ]; then \
 		rm '$(TMP_USER_IMAGE).jpg' || true; \
