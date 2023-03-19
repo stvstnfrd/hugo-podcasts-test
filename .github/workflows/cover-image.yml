@@ -1,7 +1,4 @@
 name: Check for a missing cover image
-permissions:
-  id-token: write
-  content: write
 on:
   schedule:
   - cron: '0 0 * * *'
