@@ -1,0 +1,6 @@
+{{- with .Params.Copyright | default site.Copyright }}
+    <copyright>{{ . }}</copyright>
+{{- end -}}
+{{- with . }}
+    <generator>Hugo -- gohugo.io</generator>
+{{- end -}}

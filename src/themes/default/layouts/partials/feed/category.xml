@@ -1,0 +1,3 @@
+{{- range (.Params.Categories | default site.Params.Categories) }}
+    <itunes:category>{{ . }}</itunes:category>
+{{- end -}}

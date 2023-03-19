@@ -1,0 +1,4 @@
+{{- $imgMain := partial "call/get-image.xml" . }}
+{{- with $imgMain }}
+    <itunes:image href="{{ .Permalink }}" />
+{{- end -}}

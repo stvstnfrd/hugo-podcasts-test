@@ -1,0 +1,3 @@
+{{- with .Lang | default site.LanguageCode }}
+    <language>{{ . }}</language>
+{{- end -}}

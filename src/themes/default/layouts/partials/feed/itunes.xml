@@ -1,0 +1,7 @@
+{{- with .Params.Podcast | default site.Params.Podcast }}
+    <itunes:type>{{ .Type }}</itunes:type>
+    <itunes:block>{{ .Block }}</itunes:block>
+    <itunes:complete>{{ .Complete }}</itunes:complete>
+    <itunes:new-feed-url>{{ .NewFeed }}</itunes:new-feed-url>
+    <itunes:explicit>{{ if .Explicit }}true{{ else }}false{{ end }}</itunes:explicit>
+{{- end -}}

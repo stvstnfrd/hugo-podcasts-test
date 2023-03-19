@@ -1,0 +1,21 @@
+<DIV><P>START: _DEFAULT/SUMMARY.HTML</P></DIV>
+<article class="h-entry">
+    <header>
+        <h2 class="p-name"><a class="u-url" href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+        {{ with .Date }}
+        <time class="dt-published" datetime="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
+            Created: {{ .Format ($.Param "dateformat" | default "2 January, 2006") }}
+        </time>
+        {{- end -}}
+        {{ with .Lastmod }}
+        <br />
+        <time class="dt-updated" datetime="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
+            Updated: {{ .Format ($.Param "dateformat" | default "2 January, 2006") }}
+        </time>
+        {{- end -}}
+    </header>
+    <div class="p-summary">
+        <p>{{ .Summary }}</p>
+    </div>
+</article>
+<DIV><P>STOP: _DEFAULT/SUMMARY.HTML</P></DIV>

@@ -1,0 +1,4 @@
+{{- with .Title | default site.Title }}
+    <title>{{ . }}</title>
+    <itunes:title>{{ . }}</itunes:title>
+{{- end -}}
