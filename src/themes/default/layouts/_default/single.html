@@ -1,31 +1,31 @@
 {{ define "main" -}}
-<main class="main layout__main">
-    <article class="h-entry">
-        <header>
-            <h1 class="p-name"><A class="u-url" href="{{ .Permalink }}">{{ .Title }}</A></h1>
-            {{ with .Params.Author | default ($.Param "author") | default site.Author }}
-            <span class="p-author">{{ .name }}</span>
-            {{ end -}}
-            {{ with .Date }}
-            <time class="dt-published" datetime="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
-                Created: {{ .Format ($.Param "dateformat" | default "2 January, 2006") }}
-            </time>
-            {{- end -}}
-            {{ with .Lastmod }}
-            <time class="dt-updated" datetime="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
-                Updated: {{ .Format ($.Param "dateformat" | default "2 January, 2006") }}
-            </time>
-            {{- end -}}
-        </header>
-        <div class="e-content">
-            {{ .Content }}
-        </div>
-        <ul>
-        {{ range (.GetTerms "tags") -}}
-            <li><a class="p-category" rel="tag" href="{{ .Permalink }}">{{ .LinkTitle }}</a></li>
-            <!-- u-id -->
-        {{ end -}}
-        </ul>
-    </article>
-</main>
+            <main class="main layout__main">
+                <article class="h-entry">
+                    <header>
+                        <h1 class="p-name"><A class="u-url" href="{{ .Permalink }}">{{ .Title }}</A></h1>
+                        {{ with .Params.Author | default ($.Param "author") | default site.Author }}
+                        <span class="p-author">{{ .name }}</span>
+                        {{ end -}}
+                        {{ with .Date }}
+                        <time class="dt-published" datetime="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
+                            Created: {{ .Format ($.Param "dateformat" | default "2 January, 2006") }}
+                        </time>
+                        {{- end -}}
+                        {{ with .Lastmod }}
+                        <time class="dt-updated" datetime="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
+                            Updated: {{ .Format ($.Param "dateformat" | default "2 January, 2006") }}
+                        </time>
+                        {{- end -}}
+                    </header>
+                    <div class="e-content">
+                        {{ .Content }}
+                    </div>
+                    <ul>
+                    {{ range (.GetTerms "tags") -}}
+                        <li><a class="p-category" rel="tag" href="{{ .Permalink }}">{{ .LinkTitle }}</a></li>
+                        <!-- u-id -->
+                    {{ end -}}
+                    </ul>
+                </article>
+            </main>
 {{ end }}

@@ -1,2 +1,5 @@
-<DIV class=""><p>START: PARTIALS/FOOTER.HTML</p>
-<P>STOP: PARTIALS/FOOTER.HTML</P></DIV>
+{{- with . -}}
+    {{- with .Params.Copyright }}
+        <div><span>{{ . }}<span></div>
+    {{- end -}}
+{{- end -}}

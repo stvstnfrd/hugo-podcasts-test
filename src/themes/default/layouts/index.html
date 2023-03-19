@@ -1,7 +1,6 @@
 {{ define "title" }}{{ site.Title }}{{ end }}
 
 {{ define "main" -}}
-<DIV class=""><p>START: INDEX.HTML</p></DIV>
 <main class="main layout__main">
     <div class="content">
         {{ .Content }}
@@ -13,5 +12,4 @@
     {{ end -}}
     {{ partial "pagination.html" . }}
 </main>
-<DIV class=""><p>STOP: INDEX.HTML</p></DIV>
 {{ end }}

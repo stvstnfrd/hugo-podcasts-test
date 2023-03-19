@@ -1,12 +1,13 @@
-{{ define "main" -}}
-<main class="h-feed">
-    <h1 class="p-name">{{ .Title }}</h1>
-    {{ with .Content }}<div class="p-summary">{{ . }}</div>{{ end }}
-
-    {{ $paginator := .Paginate (.Pages) -}}
-    {{ range $paginator.Pages -}}
-    {{ .Render "summary"}}
-    {{ end -}}
-    {{ partial "pagination.html" . }}
-</main>
-{{ end }}
+{{- define "main" }}
+            <main class="h-feed">
+                <h1 class="p-name">{{ .Title }}</h1>
+                {{- with .Content }}
+                <div class="p-summary">{{ . }}</div>
+                {{- end -}}
+                {{- $paginator := .Paginate (.Pages) -}}
+                {{- range $paginator.Pages -}}
+                {{- .Render "summary"}}
+                {{- end -}}
+                {{- partial "pagination.html" . }}
+            </main>
+{{- end -}}

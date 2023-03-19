@@ -1,5 +1,7 @@
-<HEADER>
-    <H1>
-        <A href="/">{{ default $.Site.Title }}</A>
-    </H1>
-</HEADER>
+{{- with . }}
+        <header>
+            <h1>
+                <a href="/">{{ default $.Site.Title }}</a>
+            </h1>
+        </header>
+{{- end -}}

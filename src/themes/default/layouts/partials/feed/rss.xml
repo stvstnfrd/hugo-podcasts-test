@@ -6,19 +6,19 @@
     xmlns:atom="http://www.w3.org/2005/Atom"
 >
   <channel>
+    {{- /* REQUIRED FIELDS */ -}}
     {{- partial "feed/title.xml" . }}
     {{- partial "feed/link.xml" . }}
     {{- partial "feed/description.xml" . }}
-    {{- partial "feed/language.xml" . }}
-    {{- partial "feed/contact.xml" . }}
-    {{- partial "feed/copyright.xml" . }}
-    {{- partial "feed/category.xml" . }}
+    {{- /* ITUNES-REQUIRED FIELDS */ -}}
     {{- partial "feed/image.xml" . }}
+    {{- partial "feed/language.xml" . }}
+    {{- partial "feed/category.xml" . }}
+    {{- /* OPTIONAL FIELDS */ -}}
+    {{- partial "feed/copyright.xml" . }}
     {{- partial "feed/date.xml" . }}
+    {{- partial "feed/contact.xml" . }}
     {{- partial "feed/items.xml" . }}
     {{- partial "feed/itunes.xml" . }}
-    {{ .Params }}
-    {{ .Resources }}
-    {{ .Type }}
   </channel>
 </rss>

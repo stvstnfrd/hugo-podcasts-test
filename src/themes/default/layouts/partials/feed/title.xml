@@ -1,4 +1,21 @@
+{{- /*
+    <title>
+        <required-for>RSS 2.0</required-for>
+        <required-for>iTunes</required-for>
+        <explanation>
+            the name of the feed
+        </explanation>
+    </title>
+    <itunes:title>
+        <optional-for>iTunes</optional-for>
+        <explanation>
+            a platform-specific title
+        </explanation>
+    </itunes:title>
+*/ -}}
 {{- with .Title | default site.Title }}
     <title>{{ . }}</title>
+{{- end -}}
+{{- with .Params.title_itunes }}
     <itunes:title>{{ . }}</itunes:title>
 {{- end -}}

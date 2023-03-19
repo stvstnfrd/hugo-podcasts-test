@@ -1,3 +1,27 @@
+{{- /*
+    <category>
+        <optional-for>RSS 2.0</optional-for>
+        <explanation>
+            A slash-delimited string of hierarchical categorization.
+        </explanation>
+    </category>
+    <itunes:category>
+        <optional-for>RSS 2.0</optional-for>
+        <explanation>
+            Nested category tags, up to 2 levels
+            See the list of acceptable categories here:
+                https://podcasters.apple.com/support/1691-apple-podcasts-categories
+        </explanation>
+    </itunes:category>
+*/ -}}
 {{- range (.Params.Categories | default site.Params.Categories) }}
-    <itunes:category>{{ . }}</itunes:category>
+    {{- $categories := split . "; " }}
+    <category>{{ path.Join $categories }}</category>
+    {{- if eq 1 (len $categories) }}
+    <itunes:category text="{{ . }}" />
+    {{- else if eq 2 (len $categories) }}
+    <itunes:category text="{{ index $categories 0 }}">
+        <itunes:category text="{{ index $categories 1 }}" />
+    </itunes:category>
+    {{- end -}}
 {{- end -}}

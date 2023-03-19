@@ -1,4 +1,14 @@
-{{- with .Description | default site.Params.Description | default . }}
+{{- /*
+    <description>
+        <required-for>RSS 2.0</required-for>
+        <required-for>iTunes</required-for>
+        <explanation>
+            the description of the feed.
+            It must be wrapped in CDATA if containing HTML.
+            iTunes caps this at 4000 bytes.
+        </explanation>
+    </description>
+*/ -}}
+{{- with .Description | default site.Params.Description | default .Summary }}
     <description>{{ . }}</description>
-    <itunes:summary>{{ . }}</itunes:summary>
 {{- end -}}

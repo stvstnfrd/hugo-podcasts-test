@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html>
-    {{- partial "head.html" . -}}
+    {{- partial "head.html" . }}
     <body>
-        <DIV><p>START: _DEFAULT/BASEOF.HTML</p></DIV>
-        {{- partial "header.html" . -}}
+        {{- partial "header.html" . }}
         <div id="content">
-            {{- block "main" . }}{{- end }}
+            {{- block "main" . -}}{{- end -}}
         </div>
-        {{- partial "footer.html" . -}}
-        <DIV><p>STOP: _DEFAULT/BASEOF.HTML</p></DIV>
+        {{- partial "footer.html" . }}
     </body>
 </html>

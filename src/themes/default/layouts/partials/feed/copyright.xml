@@ -1,5 +1,22 @@
+{{- /*
+    <copyright>
+        <optional-for>RSS 2.0</optional-for>
+        <explanation>
+            the copyright applicable to the feed.
+            Default: (C) <YEAR-LAST-MODIFIED>, <SITE-NAME>
+        </explanation>
+    </copyright>
+    <generator>
+        <optional-for>RSS 2.0</optional-for>
+        <explanation>
+            the software that generated the feed
+        </explanation>
+    </generator>
+*/ -}}
 {{- with .Params.Copyright | default site.Copyright }}
     <copyright>{{ . }}</copyright>
+{{- else }}
+    <copyright>© {{ .Lastmod.Format "2006" }}{{ with .Title | default site.Title }}, {{ . }}{{ end }}</copyright>
 {{- end -}}
 {{- with . }}
     <generator>Hugo -- gohugo.io</generator>

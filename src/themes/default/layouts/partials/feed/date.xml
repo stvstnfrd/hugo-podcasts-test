@@ -1,3 +1,30 @@
+{{- /*
+    <lastBuildDate>
+        <optional-for>RSS 2.0</optional-for>
+        <explanation>
+            the last time content was updated for the feed.
+        </explanation>
+    </lastBuildDate>
+    <pubDate>
+        <optional-for>RSS 2.0</optional-for>
+        <explanation>
+            the last time content was published for the feed.
+        </explanation>
+    </pubDate>
+    <ttl>
+        <optional-for>RSS 2.0</optional-for>
+        <explanation>
+            Time-To-Live; minimum time (in minutes) to cache the feed
+        </explanation>
+    </ttl>
+
+    <skipDays />
+    <skipHours />
+*/ -}}
 {{- if not .Date.IsZero }}
     <lastBuildDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</lastBuildDate>
+    <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</pubDate>
+{{- end -}}
+{{- with .Params.Ttl | default site.Params.Ttl | default 1440 }}
+    <ttl>{{ . }}</ttl>
 {{- end -}}
