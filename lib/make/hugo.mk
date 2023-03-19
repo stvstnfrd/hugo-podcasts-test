@@ -14,7 +14,6 @@ serve: requirements-system  ## Serve up a preview instance of the site
 .PHONY: build
 build: requirements-system  ## Build the Hugo site
 	cd "$(HUGO_SITE_NAME)" \
-		&& $(HUGO) mod get -u "$(HUGO_THEME)" \
 		&& "$(HUGO)" $(HUGO_FLAGS) \
 	;
 
