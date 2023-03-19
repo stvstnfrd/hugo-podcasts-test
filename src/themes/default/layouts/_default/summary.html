@@ -1,0 +1,24 @@
+{{- with . }}
+                <article class="h-entry">
+                    <header>
+                        <h2 class="p-name">
+                            <a class="u-url" href="{{ .Permalink }}">{{ .Title | default .}}</a>
+                        </h2>
+                        {{- with .Date }}
+                        <time class="dt-published" datetime="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
+                            Created: {{ .Format ($.Param "dateformat" | default "2 January, 2006") }}
+                        </time>
+                        {{- end -}}
+                        {{- with .Lastmod }}
+                        <time class="dt-updated" datetime="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
+                            Updated: {{ .Format ($.Param "dateformat" | default "2 January, 2006") }}
+                        </time>
+                        {{- end }}
+                    </header>
+                    {{- with .Description | default .Summary -}}
+                    <section class="p-summary">
+                        {{- . -}}
+                    </section>
+                    {{- end }}
+                </article>
+{{- end -}}

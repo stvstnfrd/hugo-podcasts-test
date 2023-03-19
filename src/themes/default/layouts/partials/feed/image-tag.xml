@@ -1,0 +1,64 @@
+{{- /*
+    <link>
+        <required-for>RSS 2.0</required-for>
+        <explanation>
+            the webpage URL for the feed
+        </explanation>
+    </link>
+    <title>
+        <required-for>RSS 2.0</required-for>
+        <explanation>
+            the title for the feed
+        </explanation>
+    </title>
+    <url>
+        <required-for>RSS 2.0</required-for>
+        <explanation>
+            the artwork/logo URL for the feed
+        </explanation>
+    </url>
+    <description>
+        <optional-for>RSS 2.0</optional-for>
+        <explanation>
+            the artwork/logo description
+        </explanation>
+    </description>
+    <height>
+        <optional-for>RSS 2.0</optional-for>
+        <explanation>
+            the artwork/logo height
+        </explanation>
+        <TODO>
+            Max: 400
+            Default: 31
+        </TODO>
+    </height>
+    <width>
+        <optional-for>RSS 2.0</optional-for>
+        <explanation>
+            the artwork/logo width
+        </explanation>
+        <TODO>
+            Max: 144
+            Default: 88
+        </TODO>
+    </width>
+*/ -}}
+{{- $imgMain := partial "call/get-image.xml" . }}
+{{- $page := . }}
+{{- with $imgMain }}
+    <image>
+        <link>{{ $page.Permalink }}</link>
+        <title>{{ $page.Title | default site.Title }}</title>
+        <url>{{ .Permalink }}</url>
+        {{- with $page.Description | default site.Params.Description | default $page.Summary }}
+        <description>{{ . }}</description>
+        {{- end }}
+        {{- with .Height }}
+        <height>{{ . }}</height>
+        {{- end }}
+        {{- with .Width }}
+        <width>{{ . }}</width>
+        {{- end }}
+    </image>
+{{- end -}}

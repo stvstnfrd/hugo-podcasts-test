@@ -1,0 +1,20 @@
+{{- $imgMain := partial "call/get-audio.xml" . -}}
+{{- $page := . -}}
+{{- $path := "" -}}
+{{- with .File -}}
+{{ $path = path.Join "content" (.Path | path.Dir) -}}
+{{- else -}}
+{{ $path = path.Join "content" (.Path | path.Dir) -}}
+{{- end -}}
+{{- with $imgMain -}}
+        {{- $path = path.Join $path . -}}
+        {{- $stats := os.Stat $path }}
+      <enclosure
+          url="{{ .Permalink }}"
+          type="{{ .MediaType }}"
+          length="{{ $stats.Size | default 0 }}"
+      />
+      {{- with .Params.duration }}
+      <itunes:duration>{{ . }}</itunes:duration>
+      {{- end -}}
+{{- end -}}

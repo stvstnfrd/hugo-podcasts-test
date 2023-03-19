@@ -65,7 +65,7 @@ define assert-not-has-changes-to-file
 $(GIT) status --untracked-files=no --porcelain $(1) \
 | grep '.' --silent \
 && { \
-    $(GIT) status --untracked-files=no "$(1)"; \
+    $(GIT) status --untracked-files=no $(1); \
     echo "Canceling; local changes to commit."; \
     exit 1; \
 } \

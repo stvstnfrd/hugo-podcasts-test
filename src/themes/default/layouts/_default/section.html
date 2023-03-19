@@ -1,0 +1,30 @@
+{{- define "title" }}{{ .Title }}: {{ site.Title }}{{ end -}}
+{{- define "main" }}
+        <main>
+            <article class="h-feed">
+                <header>
+                    <h1 class="p-name">
+                        <a class="u-url" href="{{ .Permalink }}">{{ .Title }}</a>
+                    </h1>
+                </header>
+            {{- with .Content }}
+                <section class="p-summary">
+                    {{ . }}
+                </section>
+            {{- end }}
+            {{- range .Sections -}}
+                {{- .Render "summary" }}
+            {{- end -}}
+            {{- $pages := .RegularPagesRecursive -}}
+            {{- $paginator := .Paginate $pages -}}
+            {{- with $paginator }}
+                {{- range .Pages -}}
+                    {{ .Render "summary" }}
+                {{- end }}
+            {{- end }}
+            {{- partial "pagination.html" . }}
+                <footer>
+                </footer>
+            </article>
+        </main>
+{{- end -}}

@@ -1,11 +1,12 @@
 ---
-title: "{{ replace .Name "-" " " | title }}"
+title: {{ replace .Name "-" " " | title }}
+description: ''
 date: {{ .Date }}
 draft: true
 tags: []
 feed:
-  type: "full"
-  summary: ""
+  type: full
+  explicit: false
   attachments: []
 ---
 

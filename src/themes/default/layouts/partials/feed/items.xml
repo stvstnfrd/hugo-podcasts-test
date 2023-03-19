@@ -1,0 +1,14 @@
+{{- $pctx := . -}}
+{{- $pages := $pctx.RegularPagesRecursive -}}
+{{- if .IsHome -}}
+{{ $pctx = .Site }}
+{{- $pages = $pctx.RegularPages -}}
+{{- else -}}
+{{- end -}}
+{{- $limit := site.Config.Services.RSS.Limit -}}
+{{- if ge $limit 1 -}}
+{{- $pages = $pages | first $limit -}}
+{{- end -}}
+{{- range $pages -}}
+{{- partial "feed/item.xml" . }}
+{{- end -}}
