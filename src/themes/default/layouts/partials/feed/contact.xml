@@ -18,14 +18,14 @@
         </explanation>
     </itunes:owner>
 */ -}}
-{{- with .Params.Author | default site.Author }}
+{{- with site.Author }}
     <managingEditors>{{ .email }}{{ with .name }} ({{ .  }}){{end}}</managingEditors>
     <webMaster>{{ .email }}{{ with .name }} ({{ . }}){{end}}</webMaster>
     <itunes:owner>
         {{ with .name }}<itunes:name>{{ . }}</itunes:name>{{ end }}
         {{ with .email }}<itunes:email>{{ . }}</itunes:email>{{ end }}
     </itunes:owner>
-    {{- with .name | default site.Author.name }}
-    <itunes:author>{{ . }}</itunes:author>
-    {{- end -}}
+    {{ with .name }}<itunes:author>{{ . }}</itunes:author>{{- end }}
+{{- end -}}
+{{- with .Params.Author | default site.Author }}
 {{- end -}}
