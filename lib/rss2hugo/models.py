@@ -246,7 +246,7 @@ class Episode(Parser):
             extension = '.mp3'
         filename = os.path.join(
             self.static_directory,
-            'HEARME' + extension,
+            'cover' + extension,
         )
         return filename
 
@@ -474,7 +474,7 @@ class Feed(frontmatter.Post):
         def _list(item):
             return list([item,])
         def audio(_item):
-            return [ 'HEARME.mp3', ]
+            return [ 'cover.mp3', ]
         def images(_item):
             return [ 'cover.jpg', ]
         def _bool(item):
@@ -490,8 +490,8 @@ class Feed(frontmatter.Post):
             ('episode title', 'title', str, data),
             ('explicit', 'explicit', _bool, data['feed']),
             ('type', 'type', str, data['feed']),
-            ('artwork', 'images', images, data),
-            ('attachment', 'audio', audio, data),
+            # ('artwork', 'images', images, data),
+            # ('attachment', 'audio', audio, data),
         )
         for key, subkey, handler, holder in map_keys:
             if key in data:
@@ -511,6 +511,8 @@ class Feed(frontmatter.Post):
                 data['series'] = [ data['feed title'] ]
         remove_keys = (
             'action',
+            'artwork',
+            'attachment',
             'category',
             'feed title',
         )
