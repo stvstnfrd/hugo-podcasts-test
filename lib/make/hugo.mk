@@ -98,7 +98,7 @@ ifdef FEED_ISSUE
 	$(PYTHON) ./bin/update-from-issue "$(EPISODE_INDEX)" "$(FEED_ISSUE)"
 endif
 ifneq (,$(EPISODE_ATTACHMENT))
-	$(call git-pluck-file,$(GIT_REMOTE_UPLOAD),$(GIT_BRANCH_UPLOAD),$(GIT_DIR_UPLOAD)/$(EPISODE_ATTACHMENT),$(dir $(EPISODE_INDEX))/HEARME.mp3)
+	$(call git-pluck-file,$(GIT_REMOTE_UPLOAD),$(GIT_BRANCH_UPLOAD),$(GIT_DIR_UPLOAD)/$(EPISODE_ATTACHMENT),$(dir $(EPISODE_INDEX))/cover.mp3)
 endif
 ifneq (,$(EPISODE_ARTWORK))
 	$(call git-pluck-file,$(GIT_REMOTE_UPLOAD),$(GIT_BRANCH_UPLOAD),$(GIT_DIR_UPLOAD)/$(EPISODE_ARTWORK),$(dir $(EPISODE_INDEX))/cover$(suffix $(EPISODE_ARTWORK)))
