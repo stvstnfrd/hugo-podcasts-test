@@ -6,6 +6,7 @@ endif
 GITHUB_REPO_NAME ?= $(subst /,,$(notdir $(GITHUB_REPOSITORY)))
 GITHUB_USER_IMAGE=https://github.com/$(GITHUB_USER_NAME)
 TMP_USER_IMAGE=$(TMP)/cover
+SECTIONS=$(wildcard src/content/*/)
 
 .PHONY: github-profile-image
 github-user-image:
@@ -16,6 +17,7 @@ ifeq (,$(COVER_IMAGE))
 	test -d '$(TMP)' || mkdir '$(TMP)'
 	test -d 'src/content' || mkdir 'src/content'
 	curl -L '$(GITHUB_USER_IMAGE).jpg' -o '$(TMP_USER_IMAGE).jpg'
+	image=''; \
 	if [ '100' -gt "$$(du --bytes '$(TMP_USER_IMAGE).jpg' | awk '{print $$1}')" ]; then \
 		rm '$(TMP_USER_IMAGE).jpg' || true; \
 		curl -L '$(GITHUB_USER_IMAGE).png' -o '$(TMP_USER_IMAGE).png'; \
@@ -25,12 +27,21 @@ ifeq (,$(COVER_IMAGE))
 			exit 1; \
 		else \
 			mv '$(TMP_USER_IMAGE).png' src/content/cover.png; \
-			$(call git-commit-path,src/content/cover.png,chore: update logo from github avatar); \
+			image=src/content/cover.png; \
 		fi; \
 	else \
 		mv '$(TMP_USER_IMAGE).jpg' src/content/cover.jpg; \
-		$(call git-commit-path,src/content/cover.jpg,chore: update logo from github avatar); \
+		image=src/content/cover.jpg; \
 	fi; \
+	if [ -n "$${image}" ]; then \
+		$(call git-commit-path,$${image},chore: update logo from github avatar); \
+		for i in $(SECTIONS); do \
+			if ! [ -e "$${i}/cover.jpg" ] && ! [ -e "$${i}/cover.png" ]; then \
+				( cd "$${i}" && ln -s "../$$(basename "$${image}" )" ); \
+			fi \
+		done \
+	fi \
+	;
 
 else
 	@echo "Refusing to overwrite existing file"
