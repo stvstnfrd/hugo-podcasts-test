@@ -1,6 +1,11 @@
 {{- $imgMain := partial "call/get-audio.xml" . -}}
 {{- $page := . -}}
-{{ $path := path.Join "content" (.Path | path.Dir) -}}
+{{- $path := "" -}}
+{{- with .File -}}
+{{ $path = path.Join "content" (.Path | path.Dir) -}}
+{{- else -}}
+{{ $path = path.Join "content" (.Path | path.Dir) -}}
+{{- end -}}
 {{- with $imgMain -}}
         {{- $path = path.Join $path . -}}
         {{- $stats := os.Stat $path }}
