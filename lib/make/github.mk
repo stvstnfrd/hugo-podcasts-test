@@ -37,7 +37,7 @@ ifeq (,$(COVER_IMAGE))
 		$(call git-commit-path,$${image},chore: update logo from github avatar); \
 		for i in $(SECTIONS); do \
 			if ! [ -e "$${i}/cover.jpg" ] && ! [ -e "$${i}/cover.png" ]; then \
-				( cd "$${i}" && ln -s "../$$(basename "$${image}" )" ); \
+				cp "$${image}" "$${i}/"; \
 			fi \
 		done \
 	fi \
