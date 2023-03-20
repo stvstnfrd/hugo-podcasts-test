@@ -5,6 +5,9 @@ title: 'My Podcasts'
 theme: 'default'
 paginate: 25
 publishDir: '../dist/public'
+author:
+  name: stvstnfrd
+  email: stvstnfrd@noreply.users.github.com
 module:
   replacements: 'content -> ../../dist/content,static -> ../../dist/static'
   imports:
