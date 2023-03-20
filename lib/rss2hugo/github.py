@@ -36,7 +36,8 @@ class Issue(frontmatter.Post):
             elif inside:
                 line = line[:-1]
                 data[inside].append(line)
-        data[inside] = '\n'.join(data[inside][1:])
+        if inside and inside in data:
+            data[inside] = '\n'.join(data[inside][1:])
         text = ''.join(text)
         issue = cls(text, **data)
         return issue
