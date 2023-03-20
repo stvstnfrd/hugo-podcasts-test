@@ -48,7 +48,7 @@
 {{- $page := . }}
 {{- with $imgMain }}
     <image>
-        <link>{{ $page.Permalink }}</url>
+        <link>{{ $page.Permalink }}</link>
         <title>{{ $page.Title | default site.Title }}</title>
         <url>{{ .Permalink }}</url>
         {{- with $page.Description | default site.Params.Description | default $page.Summary }}
