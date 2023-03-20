@@ -3,10 +3,10 @@ Handle GitHub-related tasks
 """
 import frontmatter
 
-from rss2lib.log import get_logger
+from rss2hugo.log import get_logger
 
 
-logger = get_logger(__name__, 'DEBUG')
+logger = get_logger(__name__)
 
 
 class Issue(frontmatter.Post):
