@@ -3,6 +3,11 @@ Handle GitHub-related tasks
 """
 import frontmatter
 
+from rss2lib.log import get_logger
+
+
+logger = get_logger(__name__, 'DEBUG')
+
 
 class Issue(frontmatter.Post):
     """
@@ -25,6 +30,8 @@ class Issue(frontmatter.Post):
         text = []
         contents = cls._open(filename)
         for line in contents:
+            logger.debug("LINE: %s", line)
+            print("LINE", line)
             text.append(line)
             if line.startswith('### '):
                 line = line[4:-1]
