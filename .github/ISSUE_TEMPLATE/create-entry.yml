@@ -22,6 +22,7 @@ body:
       description: Which feed are you adding the episode for?
       multiple: false
       options:
+      - another-feed
       - my-feed
   - type: input
     id: episode_title
