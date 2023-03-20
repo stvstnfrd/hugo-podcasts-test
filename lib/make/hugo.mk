@@ -1,7 +1,7 @@
 HUGO=hugo
 HUGO_FLAGS=--buildDrafts --cacheDir=$(PWD)/tmp/cache
 ifneq (,$(GITHUB_REPOSITORY))
-HUGO_FLAGS+=--baseURL 'https://$(GITHUB_USER_NAME).github.io/$(GITHUB_REPO_NAME)'
+HUGO_FLAGS+=--baseURL 'https://$(GITHUB_USER_NAME).github.io/$(GITHUB_REPO_NAME)/'
 endif
 HUGO_SITE_NAME=src
 HUGO_THEME=$(shell $(PYTHON) ./bin/get-key-from-yaml.py $(HUGO_SITE_NAME)/config.yaml theme)
