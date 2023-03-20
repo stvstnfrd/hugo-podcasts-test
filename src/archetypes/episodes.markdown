@@ -6,7 +6,7 @@ draft: true
 tags: []
 feed:
   type: full
-  explicit: {{ .Site.Params.Feed.explicit | default false }}
+  explicit: false
   attachments: []
 ---
 
