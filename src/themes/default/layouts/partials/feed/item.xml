@@ -9,7 +9,7 @@
       {{ end -}}
       <guid>{{ .Permalink }}</guid>
       <description>{{ .Content | html }}</description>
-      {{ partial "feed/image-tag.xml" . }}
+      {{ partial "feed/image.xml" . }}
       {{ partial "feed/attachment.xml" . }}
     </item>
 {{- end -}}
