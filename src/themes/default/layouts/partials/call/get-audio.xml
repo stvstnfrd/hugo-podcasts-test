@@ -1,4 +1,3 @@
-{{ $static := path.Join "static" (.Path | path.Dir)  -}}
 {{- $site_audios := $.Resources.ByType "audio" -}}
 {{- $page_audios := .Resources.ByType "audio" -}}
 {{- $featured := false -}}

@@ -1,4 +1,3 @@
-{{ $static := path.Join "static" (.Path | path.Dir)  -}}
 {{- $site_images := $.Resources.ByType "image" -}}
 {{- $page_images := .Resources.ByType "image" -}}
 {{- $featured := false -}}
