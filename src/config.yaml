@@ -1,7 +1,7 @@
 baseURL: 'http://example.org/'
 relativeURLs: true
 languageCode: 'en-us'
-title: 'My Podcasts'
+title: 'Deep Dive with @stvstnfrd'
 theme: 'default'
 paginate: 25
 publishDir: '../dist/public'
