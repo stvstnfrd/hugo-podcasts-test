@@ -3,6 +3,7 @@ COVER_IMAGE=$(wildcard src/content/cover.*)
 ifeq (1,$(COVER_IMAGE_FORCE))
 COVER_IMAGE=
 endif
+GITHUB_REPO_NAME ?= $(subst /,,$(notdir $(GITHUB_REPOSITORY)))
 GITHUB_USER_IMAGE=https://github.com/$(GITHUB_USER_NAME)
 TMP_USER_IMAGE=$(TMP)/cover
 
