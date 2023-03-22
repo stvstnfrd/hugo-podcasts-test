@@ -143,3 +143,5 @@ endif
 	$(GIT) push --force '$(GIT_REMOTE_UPLOAD)' '$(GIT_BRANCH_UPLOAD)'
 	$(GIT) checkout '$(GIT_BRANCH_CURRENT)'
 	$(call git-stash,pop) || true
+
+include lib/make/github.mk

@@ -1,0 +1,24 @@
+name: Check for a missing cover image
+on:
+  schedule:
+  - cron: '0 0 * * *'
+  workflow_dispatch:
+jobs:
+  image:
+    if: github.repository != 'stvstnfrd/hugo-podcasts'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Check for an image
+      env:
+        GIT_COMMIT: 1
+      run: make github-user-image
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v4
+      with:
+        branch-suffix: timestamp
+        delete-branch: true
+        title: 'update: set missing cover art'
+        body: |
+          Based on current Github profile image
