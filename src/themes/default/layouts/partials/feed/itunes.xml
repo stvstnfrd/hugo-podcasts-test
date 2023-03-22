@@ -1,0 +1,53 @@
+{{- /*
+    <itunes:explicit>
+        <required-for>RSS 2.0</required-for>
+        <explanation>
+            Is the context explicit/NSFW?
+            - 'true' or 'false'
+        </explanation>
+    </itunes:explicit>
+    <itunes:type>
+        <optional-for>iTunes</optional-for>
+        <explanation>
+            The feed format; serial or episodic (default)
+        </explanation>
+    </itunes:type>
+    <itunes:block>
+        <optional-for>iTunes</optional-for>
+        <explanation>
+            Hide the feed from the iTunes listing?
+            - 'yes' or 'no'
+        </explanation>
+    </itunes:block>
+    <itunes:complete>
+        <optional-for>iTunes</optional-for>
+        <explanation>
+            Is the feed finished?
+            - 'yes' or 'no'
+        </explanation>
+    </itunes:complete>
+    <itunes:new-feed-url>
+        <optional-for>iTunes</optional-for>
+        <explanation>
+            The new URL location of the feed
+        </explanation>
+    </itunes:new-feed-url>
+*/ -}}
+{{- with .Params.Feed | default site.Params.Feed }}
+{{- with .Type }}
+    <itunes:type>{{ . }}</itunes:type>
+{{- end -}}
+{{- with .Block }}
+    <itunes:block>{{ if . }}yes{{ else }}no{{ end }}</itunes:block>
+{{- end -}}
+{{- with .Complete }}
+    <itunes:complete>{{ if . }}yes{{ else }}no{{ end }}</itunes:complete>
+{{- end -}}
+{{- with .NewFeedUrl }}
+    <itunes:new-feed-url>{{ .NewFeed }}</itunes:new-feed-url>
+{{- end -}}
+{{- end -}}
+{{- $explicit := .Params.Explicit | default site.Params.Explicit | default false -}}
+{{- with . }}
+    <itunes:explicit>{{ if $explicit }}true{{ else }}false{{ end }}</itunes:explicit>
+{{- end -}}

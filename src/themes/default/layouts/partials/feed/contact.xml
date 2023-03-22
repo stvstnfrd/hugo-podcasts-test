@@ -1,0 +1,31 @@
+{{- /*
+    <managingEditors>
+        <optional-for>RSS 2.0</optional-for>
+        <explanation>
+            the contact responsible for editorial content for the feed.
+        </explanation>
+    </managingEditors>
+    <webMaster>
+        <optional-for>RSS 2.0</optional-for>
+        <explanation>
+            the contact responsible for technical content for the feed.
+        </explanation>
+    </webMaster>
+    <itunes:owner>
+        <optional-for>RSS 2.0</optional-for>
+        <explanation>
+            the name responsible for authoring content for the feed.
+        </explanation>
+    </itunes:owner>
+*/ -}}
+{{- with site.Author }}
+    <managingEditors>{{ .email }}{{ with .name }} ({{ .  }}){{end}}</managingEditors>
+    <webMaster>{{ .email }}{{ with .name }} ({{ . }}){{end}}</webMaster>
+    <itunes:owner>
+        {{ with .name }}<itunes:name>{{ . }}</itunes:name>{{ end }}
+        {{ with .email }}<itunes:email>{{ . }}</itunes:email>{{ end }}
+    </itunes:owner>
+    {{ with .name }}<itunes:author>{{ . }}</itunes:author>{{- end }}
+{{- end -}}
+{{- with .Params.Author | default site.Author }}
+{{- end -}}

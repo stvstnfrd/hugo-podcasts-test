@@ -40,6 +40,6 @@ if __name__ == '__main__':
     try:
         index_file = args['index_file']
         issue_file = args['issue_file']
-        Feed.update_from_issue(index_file, issue_file)
+        Feed.update_from_issue(issue_file, index_file)
     except KeyboardInterrupt:
         pass

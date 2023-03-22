@@ -1,0 +1,25 @@
+{{- /*
+    <copyright>
+        <optional-for>RSS 2.0</optional-for>
+        <explanation>
+            the logo/artwork for the feed
+        </explanation>
+    </copyright>
+    <itunes:image>
+        <required-for>iTunes</required-for>
+        <explanation>
+            the logo/artwork URL for the feed
+            - Minimum: 1400x1400px
+            - Maximum: 3000x3000px
+            - Format: JPG/PNG
+            - DPI: 72
+            - Color: RGB
+        </explanation>
+    </itunes:image>
+*/ -}}
+{{- $imgMain := partial "call/get-image.xml" . }}
+{{- $page := . }}
+{{- with $imgMain }}
+    {{- partial "feed/image-tag.xml" $page }}
+    <itunes:image href="{{ .Permalink }}" />
+{{- end -}}

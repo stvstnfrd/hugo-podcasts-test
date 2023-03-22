@@ -1,0 +1,8 @@
+{{- with . }}
+        <header>
+            <h1>
+                <a href="{{ $.Site.BaseURL }}">{{ default $.Site.Title }}</a>
+            </h1>
+            {{- partial "menu.html" (dict "menuID" "main" "page" .) }}
+        </header>
+{{- end -}}

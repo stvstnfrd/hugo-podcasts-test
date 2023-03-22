@@ -2,9 +2,10 @@ baseURL: 'http://example.org/'
 relativeURLs: true
 languageCode: 'en-us'
 title: 'My Podcasts'
-theme: 'github.com/frjo/hugo-theme-zen'
+theme: 'default'
 paginate: 25
 publishDir: '../dist/public'
+sectionPagesMenu: main
 module:
   replacements: 'content -> ../../dist/content,static -> ../../dist/static'
   imports:
@@ -13,5 +14,3 @@ module:
     mounts:
     - source: 'static'
       target: 'static/podcasts'
-  - path: 'github.com/frjo/hugo-theme-zen'
-    disabled: false

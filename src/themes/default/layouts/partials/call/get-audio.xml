@@ -1,0 +1,32 @@
+{{- $site_audios := $.Resources.ByType "audio" -}}
+{{- $page_audios := .Resources.ByType "audio" -}}
+{{- $featured := false -}}
+{{- $result := false -}}
+{{- with .Params.Audio -}}
+    {{- range first 1 . -}}
+        {{- $featured = $page_audios.GetMatch . -}}
+    {{- end -}}
+    {{- with $featured }}
+    {{- else -}}
+        {{- range first 1 . -}}
+            {{- $featured = $site_audios.GetMatch . -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+{{- with $featured }}
+{{- else -}}
+    {{- $featured = $page_audios.GetMatch "{*cover*,*feature*,*thumbnail*}" -}}
+{{- end -}}
+{{- with $featured }}
+{{- else -}}
+    {{- $featured = $site_audios.GetMatch "{*cover*,*feature*,*thumbnail*}" -}}
+{{- end -}}
+{{- with $featured }}
+{{- else -}}
+    {{- with $.Site.Params.Audio -}}
+        {{- range first 1 . }}
+            {{- $featured = . -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+{{- return $featured -}}

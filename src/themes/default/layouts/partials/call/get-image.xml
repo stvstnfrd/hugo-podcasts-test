@@ -1,0 +1,32 @@
+{{- $site_images := $.Resources.ByType "image" -}}
+{{- $page_images := .Resources.ByType "image" -}}
+{{- $featured := false -}}
+{{- $result := false -}}
+{{- with .Params.Images -}}
+    {{- range first 1 . -}}
+        {{- $featured = $page_images.GetMatch . -}}
+    {{- end -}}
+    {{- with $featured }}
+    {{- else -}}
+        {{- range first 1 . -}}
+            {{- $featured = $site_images.GetMatch . -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+{{- with $featured }}
+{{- else -}}
+    {{- $featured = $page_images.GetMatch "{*cover*,*feature*,*thumbnail*}" -}}
+{{- end -}}
+{{- with $featured }}
+{{- else -}}
+    {{- $featured = $site_images.GetMatch "{*cover*,*feature*,*thumbnail*}" -}}
+{{- end -}}
+{{- with $featured }}
+{{- else -}}
+    {{- with $.Site.Params.Images -}}
+        {{- range first 1 . }}
+            {{- $featured = . -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+{{- return $featured -}}

@@ -1,0 +1,26 @@
+{{- /*
+    <link>
+        <required-for>RSS 2.0</required-for>
+        <required-for>iTunes</required-for>
+        <explanation>
+            the webpage URL of the feed
+        </explanation>
+    </link>
+    <atom:link>
+        <required-for>Atom</required-for>
+        <optional-for>Atom</optional-for>
+        <explanation>
+            Atom feeds must at least contain a self-referential link.
+            We can also link to the HTML version of the page.
+        </explanation>
+    </atom:link>
+*/ -}}
+{{- with . }}
+    <link>{{ .Permalink }}</link>
+    {{- with .OutputFormats.Get "RSS" }}
+    {{ printf "<atom:link href=%q rel=\"self\" type=%q />" .Permalink .MediaType | safeHTML }}
+    {{- end -}}
+    {{- with .OutputFormats.Get "HTML" }}
+    {{ printf "<atom:link href=%q rel=\"alternate\" type=%q />" .Permalink .MediaType | safeHTML }}
+    {{- end -}}
+{{- end -}}

@@ -1,0 +1,8 @@
+{{- with . }}
+        <footer>
+    {{- with .Params.Copyright | default site.Copyright }}
+            <div><span>{{ . }}<span></div>
+    {{- end -}}
+            {{ partial "menu.html" (dict "menuID" "footer" "page" .) }}
+        </footer>
+{{- end -}}

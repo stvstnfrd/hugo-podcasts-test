@@ -1,0 +1,40 @@
+{{- define "title" }}{{ .Title }}: {{ site.Title }}{{ end -}}
+{{- define "main" }}
+        <main>
+            <article class="h-entry">
+                <header>
+                    <h1 class="p-name">
+                        <a class="u-url" href="{{ .Permalink }}">{{ .Title }}</a>
+                    </h1>
+                </header>
+            {{- with .Content }}
+                <section class="e-content">
+                    {{ . }}
+                </section>
+            {{- end }}
+                <footer>
+                    {{- with .Params.Author | default ($.Param "author") | default site.Author }}
+                    <span class="p-author">{{ .name }}</span>
+                    {{- end -}}
+                    {{- with .Date }}
+                    <time class="dt-published" datetime="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
+                        Created: {{ .Format ($.Param "dateformat" | default "2 January, 2006") }}
+                    </time>
+                    {{- end -}}
+                    {{- with .Lastmod }}
+                    <time class="dt-updated" datetime="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
+                        Updated: {{ .Format ($.Param "dateformat" | default "2 January, 2006") }}
+                    </time>
+                    {{- end -}}
+                {{- with (.GetTerms "tags") }}
+                    <ul>
+                {{- range . }}
+                        <li><a class="p-category" rel="tag" href="{{ .Permalink }}">{{ .LinkTitle }}</a></li>
+                    <!-- u-id -->
+                {{- end }}
+                    </ul>
+                {{- end }}
+                </footer>
+            </article>
+        </main>
+{{- end }}

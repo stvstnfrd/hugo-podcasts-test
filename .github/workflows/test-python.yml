@@ -4,8 +4,10 @@ on:
     branches-ignore:
     - uploads
     paths:
-    - ./lib/**
-    - ./.github/workflows/test-python.yml
+    - '**.py'
+    - 'lib/**'
+    - .github/workflows/test-python.yml
+  workflow_dispatch:
 jobs:
   lint:
     runs-on: ubuntu-latest

@@ -1,0 +1,13 @@
+{{- /*
+    <language>
+        <optional-for>RSS 2.0</optional-for>
+        <required-for>iTunes</required-for>
+        <explanation>
+            the language of the feed; ISO 639
+            (2 letter code, or variants like `en-us`).
+        </explanation>
+    </language>
+*/ -}}
+{{- with .Lang | default site.LanguageCode }}
+    <language>{{ . }}</language>
+{{- end -}}

@@ -1,6 +1,12 @@
 HUGO=hugo
 HUGO_FLAGS=--buildDrafts --cacheDir=$(PWD)/tmp/cache
+ifneq (,$(GITHUB_REPOSITORY))
+HUGO_FLAGS+=--baseURL 'https://$(GITHUB_USER_NAME).github.io/$(GITHUB_REPO_NAME)'
+endif
 HUGO_SITE_NAME=src
+HUGO_SITE_CONTENT ?= $(HUGO_SITE_NAME)/content
+HUGO_SITE_CONTENT_COVER_JPG ?= $(HUGO_SITE_CONTENT)/cover.jpg
+HUGO_SITE_CONTENT_COVER_PNG ?= $(HUGO_SITE_CONTENT)/cover.png
 HUGO_THEME=$(shell $(PYTHON) ./bin/get-key-from-yaml.py $(HUGO_SITE_NAME)/config.yaml theme)
 HUGO_CONFIG_FILE=$(HUGO_SITE_NAME)/config.yaml
 EPISODE_TITLE ?= New Episode
@@ -14,7 +20,6 @@ serve: requirements-system  ## Serve up a preview instance of the site
 .PHONY: build
 build: requirements-system  ## Build the Hugo site
 	cd "$(HUGO_SITE_NAME)" \
-		&& $(HUGO) mod get -u "$(HUGO_THEME)" \
 		&& "$(HUGO)" $(HUGO_FLAGS) \
 	;
 
@@ -96,7 +101,7 @@ ifdef FEED_ISSUE
 	$(PYTHON) ./bin/update-from-issue "$(EPISODE_INDEX)" "$(FEED_ISSUE)"
 endif
 ifneq (,$(EPISODE_ATTACHMENT))
-	$(call git-pluck-file,$(GIT_REMOTE_UPLOAD),$(GIT_BRANCH_UPLOAD),$(GIT_DIR_UPLOAD)/$(EPISODE_ATTACHMENT),$(dir $(EPISODE_INDEX))/HEARME.mp3)
+	$(call git-pluck-file,$(GIT_REMOTE_UPLOAD),$(GIT_BRANCH_UPLOAD),$(GIT_DIR_UPLOAD)/$(EPISODE_ATTACHMENT),$(dir $(EPISODE_INDEX))/cover.mp3)
 endif
 ifneq (,$(EPISODE_ARTWORK))
 	$(call git-pluck-file,$(GIT_REMOTE_UPLOAD),$(GIT_BRANCH_UPLOAD),$(GIT_DIR_UPLOAD)/$(EPISODE_ARTWORK),$(dir $(EPISODE_INDEX))/cover$(suffix $(EPISODE_ARTWORK)))
